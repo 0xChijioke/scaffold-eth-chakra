@@ -1,4 +1,19 @@
-import { Box, Button, Flex, Grid, GridItem, HStack, Menu, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  Grid,
+  GridItem,
+  HStack,
+  Menu,
+  Stack,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
+  VStack,
+} from "@chakra-ui/react";
 import {
   useBalance,
   useContractLoader,
@@ -310,6 +325,10 @@ function App(props) {
           <Link to="/subgraph">Subgraph</Link>
         </Menu.Item>
       </Menu> */}
+      <Stack direction={"row"} align={"center"} justify={"center"} spacing={77}>
+        <Link to={"/"}>Home</Link>
+        <Link to={"/hints"}>Fancy</Link>
+      </Stack>
 
       <Switch>
         <Route exact path="/">
@@ -392,8 +411,7 @@ function App(props) {
           position: "fixed",
           display: "flex",
           direction: "right",
-          textAlign: "left",
-          right: "right",
+          right: 0,
           bottom: 20,
           padding: 10,
         }}
@@ -413,7 +431,7 @@ function App(props) {
           padding: 10,
         }}
       >
-        <Flex justify={"center"} direction={"left"}>
+        <Flex justify={"center"} align={"center"} direction={"left"}>
           <Box>
             <Ramp price={price} address={address} networks={NETWORKS} />
           </Box>

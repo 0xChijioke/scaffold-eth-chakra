@@ -51,7 +51,7 @@ export default function Account({
 }) {
   let accountButton;
   if (web3Modal?.cachedProvider) {
-    accountButton = { name: "Logout", action: logoutOfWeb3Modal };
+    accountButton = { name: "Disconnect", action: logoutOfWeb3Modal };
   } else {
     accountButton = { name: "Connect", action: loadWeb3Modal };
   }
@@ -80,7 +80,14 @@ export default function Account({
           )}
         </Flex>
       </div>
-      <Button m={3} color="white" colorScheme="white.500" size={"md"} variant="outline" onClick={accountButton.action}>
+      <Button
+        m={3}
+        colorScheme="white.500"
+        borderColor={"gray"}
+        size={"md"}
+        variant="outline"
+        onClick={accountButton.action}
+      >
         {accountButton.name}
       </Button>
     </>
