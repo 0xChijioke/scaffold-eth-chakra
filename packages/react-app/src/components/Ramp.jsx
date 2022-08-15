@@ -50,7 +50,6 @@ export default function Ramp(props) {
             style={{ color: props.networks[n].color }}
             type={type}
             size="large"
-            shape="round"
             onClick={() => {
               window.open(props.networks[n].faucet);
             }}
@@ -64,7 +63,7 @@ export default function Ramp(props) {
 
   return (
     <div>
-      <Button onClick={onOpen}>
+      <Button onClick={onOpen} variant={""}>
         <CgDollar style={{ color: "#52c41a" }} /> {typeof props.price === "undefined" ? 0 : props.price.toFixed(2)}
       </Button>
 

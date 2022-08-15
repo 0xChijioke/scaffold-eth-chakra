@@ -22,11 +22,11 @@ import { Button } from "@chakra-ui/react";
 export default function GasGauge(props) {
   return (
     <Button
+      variant={""}
       onClick={() => {
         window.open("https://ethgasstation.info/");
       }}
       size="lg"
-      rounded={"full"}
     >
       <span style={{ marginRight: 8 }}>
         <span role="img" aria-label="fuelpump">

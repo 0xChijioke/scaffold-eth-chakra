@@ -1,4 +1,4 @@
-import { Button, Grid, GridItem, HStack, Menu, VStack } from "@chakra-ui/react";
+import { Box, Button, Flex, Grid, GridItem, HStack, Menu, VStack } from "@chakra-ui/react";
 import {
   useBalance,
   useContractLoader,
@@ -387,34 +387,55 @@ function App(props) {
         </Route> */}
       </Switch>
 
-      <ThemeSwitch />
+      <div
+        style={{
+          position: "fixed",
+          display: "flex",
+          direction: "right",
+          textAlign: "left",
+          right: "right",
+          bottom: 20,
+          padding: 10,
+        }}
+      >
+        <ThemeSwitch />
+      </div>
 
       {/* 🗺 Extra UI like gas price, eth price, faucet, and support: */}
-      <div style={{ position: "fixed", textAlign: "left", left: 0, bottom: 20, padding: 10 }}>
-        <Grid align="middle" gap={4}>
-          <GridItem span={8}>
+      <div
+        style={{
+          position: "fixed",
+          display: "flex",
+          direction: "right",
+          textAlign: "left",
+          left: 0,
+          bottom: 20,
+          padding: 10,
+        }}
+      >
+        <Flex justify={"center"} direction={"left"}>
+          <Box>
             <Ramp price={price} address={address} networks={NETWORKS} />
-          </GridItem>
+          </Box>
 
-          <GridItem span={8} style={{ textAlign: "center", opacity: 0.8 }}>
+          <Box>
             <GasGauge gasPrice={gasPrice} />
-          </GridItem>
-          <GridItem span={8} style={{ textAlign: "center", opacity: 1 }}>
+          </Box>
+          <Box>
             <Button
+              variant={"unstyled"}
               onClick={() => {
                 window.open("https://t.me/joinchat/KByvmRe5wkR-8F_zz6AjpA");
               }}
-              size="large"
-              shape="round"
             >
               <span style={{ marginRight: 8 }} role="img" aria-label="support">
                 💬
               </span>
               Support
             </Button>
-          </GridItem>
-        </Grid>
-{/* 
+          </Box>
+        </Flex>
+        {/* 
         <HStack align="middle" gutter={[4, 4]}>
           <VStack span={24}>
             {

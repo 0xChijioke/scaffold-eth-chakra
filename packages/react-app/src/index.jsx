@@ -1,18 +1,12 @@
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 import React from "react";
-import { ThemeSwitcherProvider } from "react-css-theme-switcher";
 import { BrowserRouter } from "react-router-dom";
 import ReactDOM from "react-dom";
 import App from "./App";
 import "./index.css";
+import { theme } from "./theme";
 import { ChakraProvider } from "@chakra-ui/react";
-
-const themes = {
-  dark: `${process.env.PUBLIC_URL}/dark-theme.css`,
-  light: `${process.env.PUBLIC_URL}/light-theme.css`,
-};
-
-const prevTheme = window.localStorage.getItem("theme");
+import { ColorModeScript } from "@chakra-ui/react";
 
 const subgraphUri = "http://localhost:8000/subgraphs/name/scaffold-eth/your-contract";
 
@@ -21,16 +15,15 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
-
 ReactDOM.render(
   <ApolloProvider client={client}>
-    <ThemeSwitcherProvider themeMap={themes} defaultTheme={prevTheme || "light"}>
-      <ChakraProvider>
-        <BrowserRouter>
-          <App subgraphUri={subgraphUri} />
-        </BrowserRouter>
-      </ChakraProvider>
-    </ThemeSwitcherProvider>
+    <ChakraProvider theme={theme}>
+      <BrowserRouter>
+        {/* 👇 Here's the script */}
+        <ColorModeScript initialColorMode={theme.config.initialColorMode} />
+        <App subgraphUri={subgraphUri} />
+      </BrowserRouter>
+    </ChakraProvider>
   </ApolloProvider>,
   document.getElementById("root"),
 );
