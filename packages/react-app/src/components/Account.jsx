@@ -58,15 +58,8 @@ export default function Account({
 
   return (
     <>
-      <div
-        style={{
-          border: "1px solid transparent",
-          borderRadius: "9999px",
-          backgroundColor: "#262626",
-          padding: "0.375rem 0.875rem",
-        }}
-      >
-        <Flex align={"center"} border={1} color={"white"} spacing={3}>
+      <div style={{display: "flex", align: "center"}}     >
+        <Flex align={"center"} justify={"center"} border={1} color={"white"} spacing={3}>
           <Balance address={address} provider={localProvider} price={price} size={"1.125rem"} />
 
           {address && (
