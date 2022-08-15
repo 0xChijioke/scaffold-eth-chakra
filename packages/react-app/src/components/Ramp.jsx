@@ -152,15 +152,6 @@ export default function Ramp(props) {
         </ModalContent>
       </Modal>
 
-      <Button
-        size="large"
-        shape="round"
-        onClick={() => {
-          setModalUp("up");
-        }}
-      >
-        <CgDollar style={{ color: "#52c41a" }} /> {typeof props.price === "undefined" ? 0 : props.price.toFixed(2)}
-      </Button>
       <Modal
         title="Buy ETH"
         visible={modalUp === "up"}
