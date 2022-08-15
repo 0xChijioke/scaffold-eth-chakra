@@ -83,11 +83,11 @@ export default function Address(props) {
           ) : (
             <Flex align={"center"}>
               <Text>
-                <a style={{ color: "#fff" }} target="_blank" href={etherscanLink} rel="noopener noreferrer">
+                <a target="_blank" href={etherscanLink} rel="noopener noreferrer">
                   {displayAddress}
                 </a>
               </Text>
-              <CopyIcon mx={2} size={59} color="white" _hover={{ color: "purple" }} onClick={onCopy} />
+              <CopyIcon mx={2} size={59} _hover={{ color: "purple" }} onClick={onCopy} />
             </Flex>
           )}
         </span>
