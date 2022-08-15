@@ -221,7 +221,7 @@ function App(props) {
   const [yourLoogies, setYourLoogies] = useState();
 
   const yourLoogieTankBalance = loogieTankBalance && loogieTankBalance.toNumber && loogieTankBalance.toNumber();
-  const [yourLoogieTanks, setYourLoogieTanks] = useState();
+  const [yourLoogieTanks, setYourLoogieTanks] = useState([]);
 
   const [previews, setPreviews] = useState({});
 
@@ -372,7 +372,7 @@ function App(props) {
       <div>
         <div style={{ maxWidth: 820, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
           <Button
-            type={"primary"}
+            mr={5}
             onClick={async () => {
               const priceRightNow = await readContract.price();
               try {
@@ -383,7 +383,7 @@ function App(props) {
               }
             }}
           >
-            MINT for Ξ{priceToDisplay && (+ethers.utils.formatEther(priceToDisplay)).toFixed(4)}
+            MINT Ξ{priceToDisplay && (+ethers.utils.formatEther(priceToDisplay)).toFixed(4)}
           </Button>
           <Button onClick={async () => await updateFunc()}>Refresh</Button>
         </div>
@@ -695,46 +695,23 @@ function App(props) {
         logoutOfWeb3Modal={logoutOfWeb3Modal}
         USE_NETWORK_SELECTOR={USE_NETWORK_SELECTOR}
       /> */}
-      {/* <Menu style={{ textAlign: "center", marginTop: 20 }} selectedKeys={[location.pathname]} mode="horizontal">
-        <Menu.Item key="/">
-          <Link to="/">App Home</Link>
-        </Menu.Item>
-        <Menu.Item key="/debug">
-          <Link to="/debug">Debug Contracts</Link>
-        </Menu.Item>
-        <Menu.Item key="/hints">
-          <Link to="/hints">Hints</Link>
-        </Menu.Item>
-        <Menu.Item key="/exampleui">
-          <Link to="/exampleui">ExampleUI</Link>
-        </Menu.Item>
-        <Menu.Item key="/mainnetdai">
-          <Link to="/mainnetdai">Mainnet DAI</Link>
-        </Menu.Item>
-        <Menu.Item key="/subgraph">
-          <Link to="/subgraph">Subgraph</Link>
-        </Menu.Item>
-      </Menu> */}
+
       <Stack direction={"row"} align={"center"} justify={"center"} spacing={77}>
-        <Link to={"/"}>Home</Link>
-        <Link to={"/hints"}>Fancy</Link>
+        <Link to={"/"}>Mint a Galaxy</Link>
+        <Link to={"/loogies"}>Transfer Loogie</Link>
       </Stack>
 
-      <Switch>
-        <Route exact path="/">
-          {/* pass in any web3 props to this Home component. For example, yourLocalBalance */}
-          <Home yourLocalBalance={yourLocalBalance} readContracts={readContracts} />
-        </Route>
-        {/*
-        <Route exact path="/debug">
+      {/*  <Switch>
+        <Route exact path="/debug-loogie">
+          {/*
                 🎛 this scaffolding is full of commonly used components
                 this <Contract/> component will automatically parse your ABI
                 and give you a form to interact with it locally
-            */}
+            
 
-        {/* <Contract
-            name="YourContract"
-            price={price}
+           <Contract
+            name="Loogies"
+            customContract={writeContracts && writeContracts.Loogies}
             signer={userSigner}
             provider={localProvider}
             address={address}
@@ -742,58 +719,34 @@ function App(props) {
             contractConfig={contractConfig}
           />
         </Route>
-        <Route path="/hints">
-          <Hints
-            address={address}
-            yourLocalBalance={yourLocalBalance}
-            mainnetProvider={mainnetProvider}
-            price={price}
-          />
-        </Route>
-        <Route path="/exampleui">
-          <ExampleUI
-            address={address}
-            userSigner={userSigner}
-            mainnetProvider={mainnetProvider}
-            localProvider={localProvider}
-            yourLocalBalance={yourLocalBalance}
-            price={price}
-            tx={tx}
-            writeContracts={writeContracts}
-            readContracts={readContracts}
-            purpose={purpose}
-          />
-        </Route>
-        <Route path="/mainnetdai">
+        <Route exact path="/debug-loogie-tank">
           <Contract
-            name="DAI"
-            customContract={mainnetContracts && mainnetContracts.contracts && mainnetContracts.contracts.DAI}
+            name="LoogieTank"
+            customContract={writeContracts && writeContracts.LoogieTank}
             signer={userSigner}
-            provider={mainnetProvider}
+            provider={localProvider}
             address={address}
-            blockExplorer="https://etherscan.io/"
+            chainId="69"
+            blockExplorer={blockExplorer}
             contractConfig={contractConfig}
-            chainId={1}
-          /> */}
-        {/*
-            <Contract
-              name="UNI"
-              customContract={mainnetContracts && mainnetContracts.contracts && mainnetContracts.contracts.UNI}
-              signer={userSigner}
-              provider={mainnetProvider}
-              address={address}
-              blockExplorer="https://etherscan.io/"
-            />
-        </Route>
-            */}
-        {/* <Route path="/subgraph">
-          <Subgraph
-            subgraphUri={props.subgraphUri}
-            tx={tx}
-            writeContracts={writeContracts}
-            mainnetProvider={mainnetProvider}
           />
-        </Route> */}
+        </Route>
+        <Route exact path="/loogies">
+          {renderLoogies()}
+        </Route>
+        <Route exact path="/">
+          {renderLoogieTank()}
+        </Route>
+        <Route exact path="/about"></Route> 
+      </Switch> */}
+
+      <Switch>
+        <Route exact path="/loogies">
+          {renderLoogies()}
+        </Route>
+        <Route exact path="/">
+          {renderLoogieTank()}
+        </Route>
       </Switch>
 
       <div
