@@ -22,7 +22,7 @@ contract Smile is ERC721, Ownable {
   using Counters for Counters.Counter;
   Counters.Counter private _tokenIds;
 
-  constructor() ERC721("smile", "SMILE") {
+  constructor() ERC721("Smile", "SMILE") {
     // BE HAPPY!
   }
 

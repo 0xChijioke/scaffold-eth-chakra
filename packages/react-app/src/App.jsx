@@ -83,7 +83,7 @@ const { ethers } = require("ethers");
 const initialNetwork = NETWORKS.localhost; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
 
 // 😬 Sorry for all the console logging
-const DEBUG = false;
+const DEBUG = true;
 const NETWORKCHECK = false;
 const USE_BURNER_WALLET = true; // toggle burner wallet feature
 const USE_NETWORK_SELECTOR = false;
@@ -100,7 +100,7 @@ const providers = [
 function App(props) {
   // specify all the chains your app is available on. Eg: ['localhost', 'mainnet', ...otherNetworks ]
   // reference './constants.js' for other networks
-  const networkOptions = ["localhost", "mainnet", "rinkeby"];
+  const networkOptions = [initialNetwork.name, "mainnet", "rinkeby"];
 
   const [injectedProvider, setInjectedProvider] = useState();
   const [address, setAddress] = useState();
@@ -514,7 +514,7 @@ function App(props) {
                             console.log(tankIdInBytes);
 
                             tx(
-                              writeContracts.Loogies["safeTransferFrom(address,address,uint256,bytes)"](
+                              writeContracts.Smile["safeTransferFrom(address,address,uint256,bytes)"](
                                 address,
                                 readContracts.LoogieTank.address,
                                 id,
@@ -548,10 +548,8 @@ function App(props) {
           {/* */}
 
           <div style={{ width: 820, margin: "auto", paddingBottom: 256 }}>
-            <List
-              bordered
-              dataSource={yourLoogieTanks}
-              renderItem={item => {
+            <List>
+              {yourLoogieTanks && yourLoogieTanks.map(item => {
                 const id = item.id.toNumber();
 
                 console.log("IMAGE", item.image);
@@ -590,7 +588,7 @@ function App(props) {
                       <Button
                         onClick={() => {
                           console.log("writeContracts", writeContracts);
-                          tx(writeContracts.Loogies.transferFrom(address, transferToAddresses[id], id));
+                          tx(writeContracts.Smile.transferFrom(address, transferToAddresses[id], id));
                         }}
                       >
                         Transfer
@@ -607,8 +605,8 @@ function App(props) {
                     </div>
                   </ListItem>
                 );
-              }}
-            />
+              })}
+            </List>
           </div>
 
           {/* */}
