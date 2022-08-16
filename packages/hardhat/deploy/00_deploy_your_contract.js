@@ -17,9 +17,15 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   const { deployer } = await getNamedAccounts();
   const chainId = await getChainId();
 
-  const LoogieTank = await deploy("LoogieTank",  {
+  const Smile = await deploy("Smile", {
     from: deployer,
     args: [],
+    log: true,
+  });
+
+  const LoogieTank = await deploy("LoogieTank", {
+    from: deployer,
+    args: [Smile.address],
     log: true,
   });
 
@@ -74,4 +80,4 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   //   console.error(error);
   // }
 };
-module.exports.tags = ["LoogieTank"];
+module.exports.tags = ["Smile", "LoogieTank"];

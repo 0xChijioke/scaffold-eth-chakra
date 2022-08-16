@@ -2,19 +2,20 @@ pragma solidity >=0.8.0 <0.9.0;
 //SPDX-License-Identifier: MIT
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import 'base64-sol/base64.sol';
 import './HexStrings.sol';
 // import "hardhat/console.sol";
 
 
-interface SvgNftApi {
-  function renderTokenById(uint256 id) external view returns (string memory);
-  function transferFrom(address from, address to, uint256 id) external;
+abstract contract SmileContract {
+  mapping(uint256 => bytes32) public genes;
+  function renderTokenById(uint256 id) external virtual view returns (string memory);
+  function transferFrom(address from, address to, uint256 id) external virtual;
 }
 
-contract LoogieTank is ERC721Enumerable, Ownable {
+contract LoogieTank is ERC721Enumerable, IERC721Receiver {
 
   using Strings for uint256;
   using Strings for uint8;
@@ -23,52 +24,35 @@ contract LoogieTank is ERC721Enumerable, Ownable {
 
   Counters.Counter private _tokenIds;
 
-  bytes4 private constant INTERFACE_ERC721 = 0x80ac58cd;
+  SmileContract smile;
+  mapping(uint256 => uint256[]) smileById;
 
-  // uint256 constant public price = 5000000000000000; // 0.005 eth
-  uint256 constant public price = 1; // 0.005 eth
-
-  struct Component {
-    uint256 blockAdded;
-    uint256 id;   // token id of the ERC721 contract at `addr`
-    address addr; // address of the ERC721 contract
-    uint8 x;
-    uint8 y;
-    uint8 scale;
-    int8 dx;
-    int8 dy;
+  constructor(address _smile) ERC721("Loogie Tank", "TANK") {
+    smile = SmileContract(_smile);
   }
 
-  mapping(uint256 => Component[]) public componentByTankId;
-
-  constructor() ERC721("Galaxy", "GXY") {
-  }
-
-  function mintItem() public payable returns (uint256) {
-      require(msg.value >= price, "Not enough ETH");
-
+  function mintItem() public returns (uint256) {
       _tokenIds.increment();
+
       uint256 id = _tokenIds.current();
       _mint(msg.sender, id);
 
       return id;
   }
 
-  function returnAll(uint256 _id) external {
-    require(msg.sender == ownerOf(_id), "only Galaxy owner can return the NFTs");
-    for (uint256 i = 0; i < componentByTankId[_id].length; i++) {
-      // if transferFrom fails, it will ignore and continue
-      try SvgNftApi(componentByTankId[_id][i].addr).transferFrom(address(this), ownerOf(_id), componentByTankId[_id][i].id) {}
-      catch {}
+  function returnAllSmiles(uint256 _id) external {
+    require(msg.sender == ownerOf(_id), "only tank owner can return the Smiles");
+    for (uint256 i = 0; i < smileById[_id].length; i++) {
+      smile.transferFrom(address(this), ownerOf(_id), smileById[_id][i]);
     }
 
-    delete componentByTankId[_id];
+    delete smileById[_id];
   }
 
   function tokenURI(uint256 id) public view override returns (string memory) {
-      require(_exists(id), "Galaxy does not exist");
-      string memory _name = string(abi.encodePacked('Galaxy #',id.toString()));
-      string memory description = string(abi.encodePacked('Galaxy'));
+      require(_exists(id), "not exist");
+      string memory name = string(abi.encodePacked('Loogie Tank #',id.toString()));
+      string memory description = string(abi.encodePacked('Loogie Tank'));
       string memory image = Base64.encode(bytes(generateSVGofTokenById(id)));
 
       return string(abi.encodePacked(
@@ -77,10 +61,12 @@ contract LoogieTank is ERC721Enumerable, Ownable {
             bytes(
                 abi.encodePacked(
                     '{"name":"',
-                    _name,
+                    name,
                     '", "description":"',
-                    description, '",',
-                    '"owner":"',
+                    description,
+                    '", "external_url":"https://burnyboys.com/token/',
+                    id.toString(),
+                    '", "owner":"',
                     (uint160(ownerOf(id))).toHexString(20),
                     '", "image": "',
                     'data:image/svg+xml;base64,',
@@ -95,7 +81,7 @@ contract LoogieTank is ERC721Enumerable, Ownable {
   function generateSVGofTokenById(uint256 id) internal view returns (string memory) {
 
     string memory svg = string(abi.encodePacked(
-      '<svg width="610" height="610" xmlns="http://www.w3.org/2000/svg">',
+      '<svg width="270" height="270" xmlns="http://www.w3.org/2000/svg">',
         renderTokenById(id),
       '</svg>'
     ));
@@ -106,102 +92,120 @@ contract LoogieTank is ERC721Enumerable, Ownable {
   // Visibility is `public` to enable it being called by other contracts for composition.
   function renderTokenById(uint256 id) public view returns (string memory) {
     string memory render = string(abi.encodePacked(
-       '<rect x="0" y="0" width="610" height="610" stroke="black" fill="#8FB9EB" stroke-width="5"/>',
-        renderComponent(id)
+       '<rect x="0" y="0" width="270" height="270" stroke="black" fill="#8FB9EB" stroke-width="5"/>',
+       // - (0.3, the scaling factor) * loogie head's (cx, cy).
+       // Without this, the loogies move in rectangle translated towards bottom-right.
+       '<g transform="translate(-60 -62)">',
+       renderSmile(id),
+       '</g>'
     ));
+
     return render;
   }
 
-  function renderComponent(uint256 _id) internal view returns (string memory) {
-    string memory svg = "";
+  function renderSmile(uint256 _id) internal view returns (string memory) {
+    string memory smileSVG = "";
 
-    for (uint8 i = 0; i < componentByTankId[_id].length; i++) {
-      Component memory c = componentByTankId[_id][i];
-      uint8 blocksTravelled = uint8((block.number - c.blockAdded)%256);
+    for (uint8 i = 0; i < smileById[_id].length; i++) {
+      uint16 blocksTraveled = uint16((block.number-blockAdded[smileById[_id][i]])%256);
+      int8 speedX = int8(uint8(smile.genes(smileById[_id][i])[0]));
+      int8 speedY = int8(uint8(smile.genes(smileById[_id][i])[1]));
       uint8 newX;
       uint8 newY;
 
-      newX = newPos(c.dx, blocksTravelled, c.x);
-      newY = newPos(c.dy, blocksTravelled, c.y);
+      newX = newPos(
+        speedX,
+        blocksTraveled,
+        x[smileById[_id][i]]);
 
-      svg = string(abi.encodePacked(
-        svg,
+      newY = newPos(
+        speedY,
+        blocksTraveled,
+        y[smileById[_id][i]]);
+
+      smileSVG = string(abi.encodePacked(
+        smileSVG,
         '<g>',
         '<animateTransform attributeName="transform" dur="1500s" fill="freeze" type="translate" additive="sum" ',
         'values="', newX.toString(), ' ', newY.toString(), ';'));
 
       for (uint8 j = 0; j < 100; j++) {
-        newX = newPos(c.dx, 1, newX);
-        newY = newPos(c.dy, 1, newY);
+        newX = newPos(speedX, 1, newX);
+        newY = newPos(speedY, 1, newY);
 
-        svg = string(abi.encodePacked(
-          svg,
+        smileSVG = string(abi.encodePacked(
+          smileSVG,
           newX.toString(), ' ', newY.toString(), ';'));
       }
 
-      uint8 scale = c.scale;
-      string memory scaleString="";
-      if (scale != 0) {
-        scaleString = string(abi.encodePacked('values="0.',scale.toString(),' 0.', scale.toString(), '"'));
-      }
-
-      string memory _svg;
-      try SvgNftApi(c.addr).renderTokenById(c.id) returns (string memory __svg) {
-        _svg = __svg;
-      } catch { return ""; }
-      svg = string(abi.encodePacked(
-        svg,
+    smileSVG = string(abi.encodePacked(
+      smileSVG,
         '"/>',
-        '<animateTransform attributeName="transform" type="scale" additive="sum" ', scaleString, '/>',
-        _svg,
+        '<animateTransform attributeName="transform" type="scale" additive="sum" values="0.3 0.3"/>',
+        smile.renderTokenById(smileById[_id][i]),
         '</g>'));
     }
 
-    return svg;
+    return smileSVG;
   }
 
-  function newPos(int8 speed, uint8 blocksTraveled, uint8 initPos) internal pure returns (uint8) {
-      uint8 traveled;
-      uint8 start;
+  function newPos(int8 speed, uint16 blocksTraveled, uint8 initPos) internal pure returns (uint8) {
+      uint16 traveled;
+      uint16 start;
 
       if (speed >= 0) {
-        unchecked {
-          traveled = blocksTraveled * uint8(speed);
-          start = initPos + traveled;
-        }
-        return start;
+        // console.log("speed", uint8(speed).toString());
+        traveled = uint16((blocksTraveled * uint8(speed)) % 256);
+        start = (initPos + traveled) % 256;
+        // console.log("start", start.toString());
+        // console.log("end", end.toString());
+        return uint8(start);
       } else {
-        unchecked {
-          traveled = blocksTraveled * uint8(-speed);
-          start = initPos - traveled;
-        }
-        return start;
+        // console.log("speed", uint8(-speed).toString());
+        traveled = uint16((blocksTraveled * uint8(-speed)) % 256);
+        start = (255 - traveled + initPos)%256;
+
+        // console.log("start", start.toString());
+        // console.log("end", end.toString());
+        return uint8(start);
       }
   }
 
-  function sendEthToOwner() external {
-    (bool success, ) = owner().call{value: address(this).balance}("");
-    require(success, "could not send ether");
+  // https://github.com/GNSPS/solidity-bytes-utils/blob/master/contracts/BytesLib.sol#L374
+  function toUint256(bytes memory _bytes) internal pure returns (uint256) {
+        require(_bytes.length >= 32, "toUint256_outOfBounds");
+        uint256 tempUint;
+
+        assembly {
+            tempUint := mload(add(_bytes, 0x20))
+        }
+
+        return tempUint;
   }
 
-  function transferNFT(address nftAddr, uint256 tokenId, uint256 tankId, uint8 scale) external {
-    require(ERC721(nftAddr).ownerOf(tokenId) == msg.sender, "you need to own the NFT to perform this transfer");
-    require(ownerOf(tankId) == msg.sender, "you need to own the Galaxy");
-    require(nftAddr != address(this), "nice try!");
-    require(componentByTankId[tankId].length < 256, "Galaxy is populated to max limit of 255 components");
+  mapping(uint256 => uint8) x;
+  mapping(uint256 => uint8) y;
 
-    ERC721(nftAddr).transferFrom(msg.sender, address(this), tokenId);
-    require(ERC721(nftAddr).ownerOf(tokenId) == address(this), "NFT not transferred");
+  mapping(uint256 => uint256) blockAdded;
 
-    bytes32 randish = keccak256(abi.encodePacked( blockhash(block.number-1), msg.sender, address(this), tokenId, tankId  ));
-    componentByTankId[tankId].push(Component(
-      block.number,
-      tokenId,
-      nftAddr,
-      uint8(randish[0]),
-      uint8(randish[1]),
-      scale,
-      int8(uint8(randish[2])),
-      int8(uint8(randish[3]))));
-  }
+  // to receive ERC721 tokens
+  function onERC721Received(
+      address operator,
+      address from,
+      uint256 loogieTokenId,
+      bytes calldata tankIdData) external override returns (bytes4) {
+
+      uint256 tankId = toUint256(tankIdData);
+      require(ownerOf(tankId) == from, "you can only add loogies to a tank you own.");
+      require(smileById[tankId].length < 256, "tank has reached the max limit of 255 loogies.");
+
+      smileById[tankId].push(loogieTokenId);
+
+      bytes32 randish = keccak256(abi.encodePacked( blockhash(block.number-1), from, address(this), loogieTokenId, tankIdData  ));
+      x[loogieTokenId] = uint8(randish[0]);
+      y[loogieTokenId] = uint8(randish[1]);
+      blockAdded[loogieTokenId] = block.number;
+
+      return this.onERC721Received.selector;
+    }
 }

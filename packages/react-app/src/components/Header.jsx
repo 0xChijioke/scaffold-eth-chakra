@@ -18,7 +18,7 @@ export default function Header({ link, title, subTitle, ...props }) {
             {title}
           </Heading>
         </a>
-        <Text align={"left"} fontSize={{ base: "sm", md: "xl" }}>
+        <Text align={"left"} fontSize={{ base: "sm", md: "md" }}>
           {subTitle}
         </Text>
       </div>
