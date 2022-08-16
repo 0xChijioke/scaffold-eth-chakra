@@ -67,6 +67,7 @@ module.exports = {
   networks: {
     localhost: {
       url: "http://localhost:8545",
+      allowUnlimitedContractSize: true,
       /*      
         notice no mnemonic here? it will just use account 0 of the hardhat node to deploy
         (you can put in a mnemonic here to set the deployer locally)
@@ -93,6 +94,7 @@ module.exports = {
       gasPrice: mainnetGwei * 1000000000,
       accounts: {
         mnemonic: mnemonic(),
+
       },
     },
     ropsten: {
@@ -157,6 +159,7 @@ module.exports = {
       url: "https://mainnet.optimism.io",
       accounts: {
         mnemonic: mnemonic(),
+        allowUnlimitedContractSize: true,
       },
       companionNetworks: {
         l1: "mainnet",

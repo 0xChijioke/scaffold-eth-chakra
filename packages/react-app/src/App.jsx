@@ -100,11 +100,11 @@ const providers = [
 function App(props) {
   // specify all the chains your app is available on. Eg: ['localhost', 'mainnet', ...otherNetworks ]
   // reference './constants.js' for other networks
-  const networkOptions = [initialNetwork.name, "mainnet", "rinkeby"];
+  const networkOptions = [initialNetwork.name, "optimism", "localhost", "kovanOptimism", "mainnet", "rinkeby"];
 
   const [injectedProvider, setInjectedProvider] = useState();
   const [address, setAddress] = useState();
-  const [selectedNetwork, setSelectedNetwork] = useState(networkOptions[0]);
+  const [selectedNetwork, setSelectedNetwork] = useState(networkOptions[1]);
   const location = useLocation();
 
   const targetNetwork = NETWORKS[selectedNetwork];
@@ -218,7 +218,7 @@ function App(props) {
   // 🧠 This effect will update yourCollectibles by polling when your balance changes
   //
   const yourLoogieBalance = loogieBalance && loogieBalance.toNumber && loogieBalance.toNumber();
-  const [yourLoogies, setYourLoogies] = useState();
+  const [yourLoogies, setYourLoogies] = useState([]);
 
   const yourLoogieTankBalance = loogieTankBalance && loogieTankBalance.toNumber && loogieTankBalance.toNumber();
   const [yourLoogieTanks, setYourLoogieTanks] = useState([]);
@@ -583,27 +583,26 @@ function App(props) {
 
         <div style={{ width: 820, margin: "auto", paddingBottom: 256 }}>
           <List
-            bordered
-            dataSource={yourLoogies}
-            renderItem={item => {
-              const id = item.id.toNumber();
+            {...(yourLoogies &&
+              yourLoogies.map(item => {
+                const id = item.id.toNumber();
 
-              if (DEBUG) console.log("IMAGE", item.image);
+                if (DEBUG) console.log("IMAGE", item.image);
 
-              return (
-                <List.Item key={id + "_" + item.uri + "_" + item.owner}>
-                  {renderCard(item.name, item.image, item.description)}
+                return (
+                  <ListItem key={id + "_" + item.uri + "_" + item.owner}>
+                    {renderCard(item.name, item.image, item.description)}
 
-                  <div>
-                    {transferNFTComponent(item, id, writeContracts.Loogies)}
-                    <br />
-                    <br />
-                    {transferNFTToLoogieTankComponent(writeContracts.Loogies, id)}
-                  </div>
-                </List.Item>
-              );
-            }}
-          />
+                    <div>
+                      {transferNFTComponent(item, id, writeContracts.Loogies)}
+                      <br />
+                      <br />
+                      {transferNFTToLoogieTankComponent(writeContracts.Loogies, id)}
+                    </div>
+                  </ListItem>
+                );
+              }))}
+          ></List>
         </div>
       </div>
     );
@@ -616,38 +615,37 @@ function App(props) {
 
         <div style={{ width: 820, margin: "auto", paddingBottom: 256 }}>
           <List
-            bordered
-            dataSource={yourLoogieTanks}
-            renderItem={item => {
-              const id = item.id.toNumber();
+            {...(yourLoogieTanks &&
+              yourLoogieTanks.map(item => {
+                const id = item.id.toNumber();
 
-              if (DEBUG) console.log("IMAGE", item.image);
+                if (DEBUG) console.log("IMAGE", item.image);
 
-              return (
-                <List>
-                  <ListItem key={id + "_" + item.uri + "_" + item.owner}>
-                    {renderCard(item.name, item.image, item.description)}
+                return (
+                  <List>
+                    <ListItem key={id + "_" + item.uri + "_" + item.owner}>
+                      {renderCard(item.name, item.image, item.description)}
 
-                    <div>
-                      {transferNFTComponent(item, id, writeContracts.LoogieTank)}
-                      <br />
-                      <br />
-                      {transferToTankComponent(item, id, writeContracts.LoogieTank)}
-                      <br />
-                      <br />
-                      <Button
-                        onClick={() => {
-                          tx(writeContracts.LoogieTank.returnAll(id));
-                        }}
-                      >
-                        Eject Loogies
-                      </Button>
-                    </div>
-                  </ListItem>
-                </List>
-              );
-            }}
-          />
+                      <div>
+                        {transferNFTComponent(item, id, writeContracts.LoogieTank)}
+                        <br />
+                        <br />
+                        {transferToTankComponent(item, id, writeContracts.LoogieTank)}
+                        <br />
+                        <br />
+                        <Button
+                          onClick={() => {
+                            tx(writeContracts.LoogieTank.returnAll(id));
+                          }}
+                        >
+                          Eject Loogies
+                        </Button>
+                      </div>
+                    </ListItem>
+                  </List>
+                );
+              }))}
+          ></List>
         </div>
       </div>
     );

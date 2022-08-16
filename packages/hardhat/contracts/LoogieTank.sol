@@ -41,11 +41,11 @@ contract LoogieTank is ERC721Enumerable, Ownable {
 
   mapping(uint256 => Component[]) public componentByTankId;
 
-  constructor() ERC721("Tank", "TANK") {
+  constructor() ERC721("Galaxy", "GXY") {
   }
 
   function mintItem() public payable returns (uint256) {
-      require(msg.value >= price, "Sent eth not enough");
+      require(msg.value >= price, "Not enough ETH");
 
       _tokenIds.increment();
       uint256 id = _tokenIds.current();
@@ -55,7 +55,7 @@ contract LoogieTank is ERC721Enumerable, Ownable {
   }
 
   function returnAll(uint256 _id) external {
-    require(msg.sender == ownerOf(_id), "only tank owner can return the NFTs");
+    require(msg.sender == ownerOf(_id), "only Galaxy owner can return the NFTs");
     for (uint256 i = 0; i < componentByTankId[_id].length; i++) {
       // if transferFrom fails, it will ignore and continue
       try SvgNftApi(componentByTankId[_id][i].addr).transferFrom(address(this), ownerOf(_id), componentByTankId[_id][i].id) {}
@@ -66,9 +66,9 @@ contract LoogieTank is ERC721Enumerable, Ownable {
   }
 
   function tokenURI(uint256 id) public view override returns (string memory) {
-      require(_exists(id), "token doesn not exist");
-      string memory _name = string(abi.encodePacked('Loogie Tank #',id.toString()));
-      string memory description = string(abi.encodePacked('Loogie Tank'));
+      require(_exists(id), "Galaxy does not exist");
+      string memory _name = string(abi.encodePacked('Galaxy #',id.toString()));
+      string memory description = string(abi.encodePacked('Galaxy'));
       string memory image = Base64.encode(bytes(generateSVGofTokenById(id)));
 
       return string(abi.encodePacked(
@@ -95,7 +95,7 @@ contract LoogieTank is ERC721Enumerable, Ownable {
   function generateSVGofTokenById(uint256 id) internal view returns (string memory) {
 
     string memory svg = string(abi.encodePacked(
-      '<svg width="310" height="310" xmlns="http://www.w3.org/2000/svg">',
+      '<svg width="610" height="610" xmlns="http://www.w3.org/2000/svg">',
         renderTokenById(id),
       '</svg>'
     ));
@@ -106,7 +106,7 @@ contract LoogieTank is ERC721Enumerable, Ownable {
   // Visibility is `public` to enable it being called by other contracts for composition.
   function renderTokenById(uint256 id) public view returns (string memory) {
     string memory render = string(abi.encodePacked(
-       '<rect x="0" y="0" width="310" height="310" stroke="black" fill="#8FB9EB" stroke-width="5"/>',
+       '<rect x="0" y="0" width="610" height="610" stroke="black" fill="#8FB9EB" stroke-width="5"/>',
         renderComponent(id)
     ));
     return render;
@@ -179,16 +179,16 @@ contract LoogieTank is ERC721Enumerable, Ownable {
       }
   }
 
-  function senEthToOwner() external {
+  function sendEthToOwner() external {
     (bool success, ) = owner().call{value: address(this).balance}("");
     require(success, "could not send ether");
   }
 
   function transferNFT(address nftAddr, uint256 tokenId, uint256 tankId, uint8 scale) external {
-    require(ERC721(nftAddr).ownerOf(tokenId) == msg.sender, "you need to own the NFT");
-    require(ownerOf(tankId) == msg.sender, "you need to own the tank");
+    require(ERC721(nftAddr).ownerOf(tokenId) == msg.sender, "you need to own the NFT to perform this transfer");
+    require(ownerOf(tankId) == msg.sender, "you need to own the Galaxy");
     require(nftAddr != address(this), "nice try!");
-    require(componentByTankId[tankId].length < 256, "tank has reached the max limit of 255 components");
+    require(componentByTankId[tankId].length < 256, "Galaxy is populated to max limit of 255 components");
 
     ERC721(nftAddr).transferFrom(msg.sender, address(this), tokenId);
     require(ERC721(nftAddr).ownerOf(tokenId) == address(this), "NFT not transferred");
