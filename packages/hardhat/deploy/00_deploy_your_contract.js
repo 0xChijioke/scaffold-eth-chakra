@@ -81,4 +81,4 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   //   console.error(error);
   // }
 };
-module.exports.tags = ["smile", "loogieTank"];
+module.exports.tags = ["Smile", "LoogieTank"];

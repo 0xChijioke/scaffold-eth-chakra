@@ -549,63 +549,64 @@ function App(props) {
 
           <div style={{ width: 820, margin: "auto", paddingBottom: 256 }}>
             <List>
-              {yourLoogieTanks && yourLoogieTanks.map(item => {
-                const id = item.id.toNumber();
+              {yourLoogieTanks &&
+                yourLoogieTanks.map(item => {
+                  const id = item.id.toNumber();
 
-                console.log("IMAGE", item.image);
+                  console.log("IMAGE", item.image);
 
-                return (
-                  <ListItem key={id + "_" + item.uri + "_" + item.owner}>
-                    <Flex>
-                      <Heading>
-                        <div>
-                          <span style={{ fontSize: 18, marginRight: 8 }}>{item.name}</span>
-                        </div>
-                      </Heading>
+                  return (
+                    <ListItem key={id + "_" + item.uri + "_" + item.owner}>
+                      <Flex>
+                        <Heading>
+                          <div>
+                            <span style={{ fontSize: 18, marginRight: 8 }}>{item.name}</span>
+                          </div>
+                        </Heading>
 
-                      <img src={item.image} />
-                      <div>{item.description}</div>
-                    </Flex>
+                        <img src={item.image} />
+                        <div>{item.description}</div>
+                      </Flex>
 
-                    <div>
-                      owner:{" "}
-                      <Address
-                        address={item.owner}
-                        ensProvider={mainnetProvider}
-                        blockExplorer={blockExplorer}
-                        fontSize={16}
-                      />
-                      <AddressInput
-                        ensProvider={mainnetProvider}
-                        placeholder="transfer to address"
-                        value={transferToAddresses[id]}
-                        onChange={newValue => {
-                          const update = {};
-                          update[id] = newValue;
-                          setTransferToAddresses({ ...transferToAddresses, ...update });
-                        }}
-                      />
-                      <Button
-                        onClick={() => {
-                          console.log("writeContracts", writeContracts);
-                          tx(writeContracts.Smile.transferFrom(address, transferToAddresses[id], id));
-                        }}
-                      >
-                        Transfer
-                      </Button>
-                      <br />
-                      <br />
-                      <Button
-                        onClick={() => {
-                          tx(writeContracts.LoogieTank.returnAllLoogies(id));
-                        }}
-                      >
-                        Eject Loogies
-                      </Button>
-                    </div>
-                  </ListItem>
-                );
-              })}
+                      <div>
+                        owner:{" "}
+                        <Address
+                          address={item.owner}
+                          ensProvider={mainnetProvider}
+                          blockExplorer={blockExplorer}
+                          fontSize={16}
+                        />
+                        <AddressInput
+                          ensProvider={mainnetProvider}
+                          placeholder="transfer to address"
+                          value={transferToAddresses[id]}
+                          onChange={newValue => {
+                            const update = {};
+                            update[id] = newValue;
+                            setTransferToAddresses({ ...transferToAddresses, ...update });
+                          }}
+                        />
+                        <Button
+                          onClick={() => {
+                            console.log("writeContracts", writeContracts);
+                            tx(writeContracts.Smile.transferFrom(address, transferToAddresses[id], id));
+                          }}
+                        >
+                          Transfer
+                        </Button>
+                        <br />
+                        <br />
+                        <Button
+                          onClick={() => {
+                            tx(writeContracts.LoogieTank.returnAllLoogies(id));
+                          }}
+                        >
+                          Eject Loogies
+                        </Button>
+                      </div>
+                    </ListItem>
+                  );
+                })}
             </List>
           </div>
 
