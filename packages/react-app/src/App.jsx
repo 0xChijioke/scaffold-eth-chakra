@@ -396,7 +396,7 @@ function App(props) {
       /> */}
 
       <Stack direction={"row"} align={"center"} justify={"center"} spacing={77}>
-        <Link to={"/"}>Mint a Galaxy</Link>
+        <Link to={"/mintloogietank"}>Mint a Galaxy</Link>
         <Link to={"/mintloogies"}>Transfer Loogie</Link>
       </Stack>
 
@@ -634,7 +634,7 @@ function App(props) {
           textAlign: "left",
           left: 0,
           bottom: 20,
-          padding: 10,
+          padding: 6,
         }}
       >
         <Flex justify={"center"} align={"center"} direction={"left"}>

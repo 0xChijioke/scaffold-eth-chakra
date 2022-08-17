@@ -17,20 +17,21 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   const { deployer } = await getNamedAccounts();
   const chainId = await getChainId();
 
-  const Smile = await deploy("Smile", {
+  const smile = await deploy("Smile", {
     from: deployer,
     args: [],
     log: true,
   });
+  
+  // Getting a previously deployed contract
+  // const SmileAddr = await ethers.getContract("Smile", deployer);
 
-  const LoogieTank = await deploy("LoogieTank", {
+  const loogieTank = await deploy("LoogieTank", {
     from: deployer,
-    args: [Smile.address],
+    args: [smile.address],
     log: true,
   });
 
-  // Getting a previously deployed contract
-  // const YourContract = await ethers.getContract("YourContract", deployer);
   /*  await YourContract.setPurpose("Hello");
   
     To take ownership of yourContract using the ownable library uncomment next line and add the 
@@ -80,4 +81,4 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   //   console.error(error);
   // }
 };
-module.exports.tags = ["Smile", "LoogieTank"];
+module.exports.tags = ["smile", "loogieTank"];
