@@ -15,7 +15,7 @@ abstract contract SmileContract {
   function transferFrom(address from, address to, uint256 id) external virtual;
 }
 
-contract LoogieTank is ERC721Enumerable, IERC721Receiver {
+contract Happi is ERC721Enumerable, IERC721Receiver {
 
   using Strings for uint256;
   using Strings for uint8;
@@ -27,7 +27,7 @@ contract LoogieTank is ERC721Enumerable, IERC721Receiver {
   SmileContract smile;
   mapping(uint256 => uint256[]) smileById;
 
-  constructor(address _smile) ERC721("Loogie Tank", "TANK") {
+  constructor(address _smile) ERC721("Happi", "HP") {
     smile = SmileContract(_smile);
   }
 
@@ -41,7 +41,8 @@ contract LoogieTank is ERC721Enumerable, IERC721Receiver {
   }
 
   function returnAllSmiles(uint256 _id) external {
-    require(msg.sender == ownerOf(_id), "only tank owner can return the Smiles");
+    require(smileById[_id].length > 0, "No Joy!");
+    require(msg.sender == ownerOf(_id), "only a happy person can return smiles");
     for (uint256 i = 0; i < smileById[_id].length; i++) {
       smile.transferFrom(address(this), ownerOf(_id), smileById[_id][i]);
     }
@@ -51,8 +52,8 @@ contract LoogieTank is ERC721Enumerable, IERC721Receiver {
 
   function tokenURI(uint256 id) public view override returns (string memory) {
       require(_exists(id), "not exist");
-      string memory name = string(abi.encodePacked('Loogie Tank #',id.toString()));
-      string memory description = string(abi.encodePacked('Loogie Tank'));
+      string memory name = string(abi.encodePacked('Happi #',id.toString()));
+      string memory description = string(abi.encodePacked('Happi'));
       string memory image = Base64.encode(bytes(generateSVGofTokenById(id)));
 
       return string(abi.encodePacked(
@@ -81,7 +82,7 @@ contract LoogieTank is ERC721Enumerable, IERC721Receiver {
   function generateSVGofTokenById(uint256 id) internal view returns (string memory) {
 
     string memory svg = string(abi.encodePacked(
-      '<svg width="270" height="270" xmlns="http://www.w3.org/2000/svg">',
+      '<svg width="370" height="370" xmlns="http://www.w3.org/2000/svg">',
         renderTokenById(id),
       '</svg>'
     ));
@@ -92,7 +93,7 @@ contract LoogieTank is ERC721Enumerable, IERC721Receiver {
   // Visibility is `public` to enable it being called by other contracts for composition.
   function renderTokenById(uint256 id) public view returns (string memory) {
     string memory render = string(abi.encodePacked(
-       '<rect x="0" y="0" width="270" height="270" stroke="black" fill="#8FB9EB" stroke-width="5"/>',
+       '<rect x="0" y="0" width="370" height="370" stroke="black" fill="#001649" stroke-width="5"/>',
        // - (0.3, the scaling factor) * loogie head's (cx, cy).
        // Without this, the loogies move in rectangle translated towards bottom-right.
        '<g transform="translate(-60 -62)">',
@@ -196,8 +197,8 @@ contract LoogieTank is ERC721Enumerable, IERC721Receiver {
       bytes calldata tankIdData) external override returns (bytes4) {
 
       uint256 tankId = toUint256(tankIdData);
-      require(ownerOf(tankId) == from, "you can only add loogies to a tank you own.");
-      require(smileById[tankId].length < 256, "tank has reached the max limit of 255 loogies.");
+      require(ownerOf(tankId) == from, "you can only add smiles to your own happi.");
+      require(smileById[tankId].length < 256, "Excess joy! Cant take anymore.");
 
       smileById[tankId].push(loogieTokenId);
 

@@ -96,15 +96,11 @@ contract Smile is ERC721, Ownable {
   // Visibility is `public` to enable it being called by other contracts for composition.
   function renderTokenById(uint256 id) public view returns (string memory) {
     string memory render = string(abi.encodePacked(
-        '<circle cx="100" cy="100" fill="#',
-         color[id].toColor(),
-        '" r="78" stroke="black" stroke-width="3"/>',
-        '<g class="eyes">',
-        '<circle cx="61" cy="82" r="12"/>',
-        '<circle cx="127" cy="82" r="12"/>',
-        '</g>',
-        '<path d="m136.81 116.53c.69 26.17-64.11 42-81.52-.73" style="fill:none; stroke: black; stroke-width: 3;"/>'
-      ));
+      '<g transform="translate(60 60)"><circle r="50" stroke="#000" stroke-width="2" fill="#',
+      color[id].toColor(),
+      '"/><circle cx="-20" cy="-10" r="5"/><circle cx="20" cy="-10" r="5"/><path fill="none" stroke="#000" stroke-width="3" stroke-linecap="round" d="M-20 15c0 20 40 20 40 0"/></g>'
+     
+        ));
 
     return render;
   }

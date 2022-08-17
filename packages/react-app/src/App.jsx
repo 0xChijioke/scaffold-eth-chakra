@@ -1,23 +1,17 @@
 import {
   Box,
   Button,
+  Center,
+  Container,
   Flex,
-  Grid,
-  GridItem,
   Heading,
   HStack,
   Image,
   Input,
   List,
   ListItem,
-  Menu,
   Stack,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
-  VStack,
+  Text,
 } from "@chakra-ui/react";
 import {
   useBalance,
@@ -42,8 +36,8 @@ import {
   Header,
   Ramp,
   ThemeSwitch,
-  //NetworkDisplay,
-  //FaucetHint,
+  NetworkDisplay,
+  FaucetHint,
   //NetworkSwitch,
 } from "./components";
 import { NETWORKS, ALCHEMY_KEY } from "./constants";
@@ -51,12 +45,6 @@ import externalContracts from "./contracts/external_contracts";
 // contracts
 import deployedContracts from "./contracts/hardhat_contracts.json";
 import { Transactor, Web3ModalSetup } from "./helpers";
-import {
-  Home,
-  //ExampleUI,
-  //Hints,
-  //Subgraph
-} from "./views";
 import { useStaticJsonRPC } from "./hooks";
 
 const { ethers } = require("ethers");
@@ -84,7 +72,7 @@ const initialNetwork = NETWORKS.localhost; // <------- select your target fronte
 
 // 😬 Sorry for all the console logging
 const DEBUG = true;
-const NETWORKCHECK = false;
+const NETWORKCHECK = true;
 const USE_BURNER_WALLET = true; // toggle burner wallet feature
 const USE_NETWORK_SELECTOR = false;
 
@@ -196,35 +184,35 @@ function App(props) {
 
   // keep track of a variable from the contract in the local React state:
   const smileBalance = useContractReader(readContracts, "Smile", "balanceOf", [address]);
-  console.log("🤗 loogie balance:", smileBalance);
+  console.log("🤗 Smile balance:", smileBalance);
 
-  const loogieTankBalance = useContractReader(readContracts, "LoogieTank", "balanceOf", [address]);
-  console.log("🤗 loogie tank balance:", loogieTankBalance);
+  const happiBalance = useContractReader(readContracts, "Happi", "balanceOf", [address]);
+  console.log("🤗 Happi balance:", happiBalance);
 
   // 📟 Listen for broadcast events
-  const loogieTransferEvents = useEventListener(readContracts, "Smile", "Transfer", localProvider, 1);
-  console.log("📟 Loogie Transfer events:", loogieTransferEvents);
+  const smileTransferEvents = useEventListener(readContracts, "Smile", "Transfer", localProvider, 1);
+  console.log("📟 Smile Transfer events:", smileTransferEvents);
 
-  const loogieTankTransferEvents = useEventListener(readContracts, "LoogieTank", "Transfer", localProvider, 1);
-  console.log("📟 Loogie Tank Transfer events:", loogieTankTransferEvents);
+  const happiTankTransferEvents = useEventListener(readContracts, "Happi", "Transfer", localProvider, 1);
+  console.log("📟 Happi Transfer events:", happiTankTransferEvents);
 
   //
   // 🧠 This effect will update yourCollectibles by polling when your balance changes
   //
-  const yourLoogieBalance = smileBalance && smileBalance.toNumber && smileBalance.toNumber();
-  const [yourLoogies, setYourLoogies] = useState();
+  const yourSmileBalance = smileBalance && smileBalance.toNumber && smileBalance.toNumber();
+  const [yourSmile, setYourSmile] = useState();
 
-  const yourLoogieTankBalance = loogieTankBalance && loogieTankBalance.toNumber && loogieTankBalance.toNumber();
-  const [yourLoogieTanks, setYourLoogieTanks] = useState();
+  const yourHappiBalance = happiBalance && happiBalance.toNumber && happiBalance.toNumber();
+  const [yourHappi, setYourHappi] = useState();
 
   async function updateLoogieTanks() {
-    const loogieTankUpdate = [];
-    for (let tokenIndex = 0; tokenIndex < yourLoogieTankBalance; tokenIndex++) {
+    const happiUpdate = [];
+    for (let tokenIndex = 0; tokenIndex < yourHappiBalance; tokenIndex++) {
       try {
         console.log("Getting token index", tokenIndex);
-        const tokenId = await readContracts.LoogieTank.tokenOfOwnerByIndex(address, tokenIndex);
+        const tokenId = await readContracts.Happi.tokenOfOwnerByIndex(address, tokenIndex);
         console.log("tokenId", tokenId);
-        const tokenURI = await readContracts.LoogieTank.tokenURI(tokenId);
+        const tokenURI = await readContracts.Happi.tokenURI(tokenId);
         console.log("tokenURI", tokenURI);
         const jsonManifestString = atob(tokenURI.substring(29));
         console.log("jsonManifestString", jsonManifestString);
@@ -232,7 +220,7 @@ function App(props) {
         try {
           const jsonManifest = JSON.parse(jsonManifestString);
           console.log("jsonManifest", jsonManifest);
-          loogieTankUpdate.push({ id: tokenId, uri: tokenURI, owner: address, ...jsonManifest });
+          happiUpdate.push({ id: tokenId, uri: tokenURI, owner: address, ...jsonManifest });
         } catch (e) {
           console.log(e);
         }
@@ -240,13 +228,13 @@ function App(props) {
         console.log(e);
       }
     }
-    setYourLoogieTanks(loogieTankUpdate.reverse());
+    setYourHappi(happiUpdate.reverse());
   }
 
   useEffect(() => {
     const updateYourCollectibles = async () => {
-      const loogieUpdate = [];
-      for (let tokenIndex = 0; tokenIndex < yourLoogieBalance; tokenIndex++) {
+      const smileUpdate = [];
+      for (let tokenIndex = 0; tokenIndex < yourSmileBalance; tokenIndex++) {
         try {
           console.log("Getting token index", tokenIndex);
           const tokenId = await readContracts.Smile.tokenOfOwnerByIndex(address, tokenIndex);
@@ -263,7 +251,7 @@ function App(props) {
           try {
             const jsonManifest = JSON.parse(jsonManifestString);
             console.log("jsonManifest", jsonManifest);
-            loogieUpdate.push({ id: tokenId, uri: tokenURI, owner: address, ...jsonManifest });
+            smileUpdate.push({ id: tokenId, uri: tokenURI, owner: address, ...jsonManifest });
           } catch (e) {
             console.log(e);
           }
@@ -271,11 +259,11 @@ function App(props) {
           console.log(e);
         }
       }
-      setYourLoogies(loogieUpdate.reverse());
+      setYourSmile(smileUpdate.reverse());
       updateLoogieTanks();
     };
     updateYourCollectibles();
-  }, [address, yourLoogieBalance, yourLoogieTankBalance]);
+  }, [address, yourSmileBalance, yourHappiBalance]);
 
   /*
   const addressFromENS = useResolveName(mainnetProvider, "austingriffith.eth");
@@ -348,9 +336,9 @@ function App(props) {
   }, [loadWeb3Modal]);
 
   const faucetAvailable = localProvider && localProvider.connection && targetNetwork.name.indexOf("local") !== -1;
-
   const [transferToAddresses, setTransferToAddresses] = useState({});
   const [transferToTankId, setTransferToTankId] = useState({});
+  const [pending, setPending] = useState(false);
 
   return (
     <div className="App">
@@ -383,21 +371,21 @@ function App(props) {
           </div>
         </div>
       </Header>
-      {/* {yourLocalBalance.lte(ethers.BigNumber.from("0")) && (
+      {yourLocalBalance.lte(ethers.BigNumber.from("0")) && (
         <FaucetHint localProvider={localProvider} targetNetwork={targetNetwork} address={address} />
-      )} */}
-      {/* <NetworkDisplay
+      )}
+      <NetworkDisplay
         NETWORKCHECK={NETWORKCHECK}
         localChainId={localChainId}
         selectedChainId={selectedChainId}
         targetNetwork={targetNetwork}
         logoutOfWeb3Modal={logoutOfWeb3Modal}
         USE_NETWORK_SELECTOR={USE_NETWORK_SELECTOR}
-      /> */}
+      />
 
       <Stack direction={"row"} align={"center"} justify={"center"} spacing={77}>
-        <Link to={"/mintloogietank"}>Mint a Galaxy</Link>
-        <Link to={"/mintloogies"}>Transfer Loogie</Link>
+        <Link to={"/"}>Smile</Link>
+        <Link to={"/minthappi"}>Mint Happi</Link>
       </Stack>
 
       <Switch>
@@ -428,12 +416,15 @@ function App(props) {
             contractConfig={contractConfig}
           />
         </Route> */}
-        <Route exact path="/mintloogies">
+        <Route exact path="/">
           <div style={{ maxWidth: 820, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
             <Button
               onClick={async () => {
+                setPending(true);
                 await tx(writeContracts.Smile.mintItem());
+                setPending(false);
               }}
+              isLoading={pending}
             >
               MINT
             </Button>
@@ -441,8 +432,8 @@ function App(props) {
           {/* */}
           <div style={{ width: 820, margin: "auto", paddingBottom: 256 }}>
             <List>
-              {yourLoogies &&
-                yourLoogies.map(item => {
+              {yourSmile &&
+                yourSmile.map(item => {
                   const id = item.id.toNumber();
 
                   console.log("IMAGE", item.image);
@@ -456,7 +447,7 @@ function App(props) {
                           </div>
                         </Heading>
                         }
-                        <img src={item.image} />
+                        <Image src={item.image} />
                         <div>{item.description}</div>
                       </Flex>
 
@@ -488,12 +479,8 @@ function App(props) {
                         </Button>
                         <br />
                         <br />
-                        Transfer to Loogie Tank:{" "}
-                        <Address
-                          address={readContracts.LoogieTank.address}
-                          blockExplorer={blockExplorer}
-                          fontSize={16}
-                        />
+                        Transfer to Happi:{" "}
+                        <Address address={readContracts.Happi.address} blockExplorer={blockExplorer} fontSize={16} />
                         <Input
                           placeholder="Tank ID"
                           // value={transferToTankId[id]}
@@ -516,7 +503,7 @@ function App(props) {
                             tx(
                               writeContracts.Smile["safeTransferFrom(address,address,uint256,bytes)"](
                                 address,
-                                readContracts.LoogieTank.address,
+                                readContracts.Happi.address,
                                 id,
                                 tankIdInBytes,
                               ),
@@ -533,82 +520,94 @@ function App(props) {
           </div>
           {/* */}
         </Route>
-        <Route exact path="/mintloogietank">
-          <div style={{ maxWidth: 820, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
+        <Route exact path="/minthappi">
+          <Flex w={"full"} direction={"row-reverse"}>
             <Button
-              type={"primary"}
-              onClick={() => {
-                tx(writeContracts.LoogieTank.mintItem());
+              mr={5}
+              onClick={async () => {
+                setPending(true);
+                await tx(writeContracts.Happi.mintItem());
+                setPending(false);
               }}
+              isLoading={pending}
+              loadingText="Minting"
             >
               MINT
             </Button>
-            <Button onClick={() => updateLoogieTanks()}>Refresh</Button>
-          </div>
+            <Button mr={5} onClick={() => updateLoogieTanks()}>
+              Refresh
+            </Button>
+          </Flex>
           {/* */}
 
-          <div style={{ width: 820, margin: "auto", paddingBottom: 256 }}>
+          <Container boxShadow="dark-lg" rounded="3xl" p={4} w={"fit-content"}>
             <List>
-              {yourLoogieTanks &&
-                yourLoogieTanks.map(item => {
+              {yourHappi &&
+                yourHappi.map(item => {
                   const id = item.id.toNumber();
 
                   console.log("IMAGE", item.image);
 
                   return (
                     <ListItem key={id + "_" + item.uri + "_" + item.owner}>
-                      <Flex>
-                        <Heading>
-                          <div>
-                            <span style={{ fontSize: 18, marginRight: 8 }}>{item.name}</span>
-                          </div>
+                      <Flex direction={"column"}>
+                        <Heading color={"bisque"} fontFamily={"monospace"}>
+                          {item.name}
                         </Heading>
-
-                        <img src={item.image} />
-                        <div>{item.description}</div>
+                        <Image borderRadius={"2xl"} src={item.image} />
+                        <Text>{item.description}</Text>
                       </Flex>
 
-                      <div>
-                        owner:{" "}
-                        <Address
-                          address={item.owner}
-                          ensProvider={mainnetProvider}
-                          blockExplorer={blockExplorer}
-                          fontSize={16}
-                        />
-                        <AddressInput
-                          ensProvider={mainnetProvider}
-                          placeholder="transfer to address"
-                          value={transferToAddresses[id]}
-                          onChange={newValue => {
-                            const update = {};
-                            update[id] = newValue;
-                            setTransferToAddresses({ ...transferToAddresses, ...update });
-                          }}
-                        />
-                        <Button
-                          onClick={() => {
-                            console.log("writeContracts", writeContracts);
-                            tx(writeContracts.Smile.transferFrom(address, transferToAddresses[id], id));
-                          }}
-                        >
-                          Transfer
-                        </Button>
-                        <br />
-                        <br />
-                        <Button
-                          onClick={() => {
-                            tx(writeContracts.LoogieTank.returnAllLoogies(id));
-                          }}
-                        >
-                          Eject Loogies
-                        </Button>
-                      </div>
+                      <Flex my={2} alignItems={"center"} justify={"center"} direction={"column"}>
+                        <Flex direction={"row"} justify={"center"} align={"center"}>
+                          <Text pr={2}>Owner</Text>
+                          <Address
+                            address={item.owner}
+                            ensProvider={mainnetProvider}
+                            blockExplorer={blockExplorer}
+                            fontSize={16}
+                          />
+                        </Flex>
+                        <Flex direction={"column"} alignItems={"center"} w={"fit-content"}>
+                          <AddressInput
+                            ensProvider={mainnetProvider}
+                            placeholder="Transfer to address"
+                            value={transferToAddresses[id]}
+                            onChange={newValue => {
+                              const update = {};
+                              update[id] = newValue;
+                              setTransferToAddresses({ ...transferToAddresses, ...update });
+                            }}
+                          />
+                        </Flex>
+                        <HStack my={3}>
+                          <Button
+                            onClick={() => {
+                              console.log("writeContracts", writeContracts);
+                              tx(writeContracts.Smile.transferFrom(address, transferToAddresses[id], id));
+                            }}
+                          >
+                            Transfer
+                          </Button>
+                          <br />
+                          <br />
+                          <Button
+                            onClick={async () => {
+                              setPending(true);
+                              await tx(writeContracts.Happi.returnAllSmiles(id));
+                              setPending(false);
+                            }}
+                            isLoading={pending}
+                          >
+                            Remove Smiles
+                          </Button>
+                        </HStack>
+                      </Flex>
                     </ListItem>
                   );
                 })}
             </List>
-          </div>
+          </Container>
 
           {/* */}
         </Route>

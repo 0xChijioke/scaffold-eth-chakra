@@ -92,7 +92,7 @@ export default function Transactor(providerOrSigner, gasPrice, etherscan) {
           toast({
             title: "Local Transaction Sent",
             description: result.hash,
-            placement: "bottomRight",
+            placement: "topRight",
           });
           // on most networks BlockNative will update a transaction handler,
           // but locally we will set an interval to listen...

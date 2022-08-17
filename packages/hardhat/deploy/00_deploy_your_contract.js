@@ -26,7 +26,7 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   // Getting a previously deployed contract
   // const SmileAddr = await ethers.getContract("Smile", deployer);
 
-  const loogieTank = await deploy("LoogieTank", {
+  const happi = await deploy("Happi", {
     from: deployer,
     args: [smile.address],
     log: true,
@@ -81,4 +81,4 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   //   console.error(error);
   // }
 };
-module.exports.tags = ["Smile", "LoogieTank"];
+module.exports.tags = ["Smile", "Happi"];
