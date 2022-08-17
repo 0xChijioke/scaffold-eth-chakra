@@ -140,7 +140,7 @@ function App(props) {
   /* 🔥 This hook will get the price of Gas from ⛽️ EtherGasStation */
   const gasPrice = useGasPrice(targetNetwork, "fast");
   // Use your injected provider from 🦊 Metamask or if you don't have it then instantly generate a 🔥 burner wallet.
-  const userProviderAndSigner = useUserProviderAndSigner(injectedProvider, localProvider);
+  const userProviderAndSigner = useUserProviderAndSigner(injectedProvider, localProvider, USE_BURNER_WALLET);
   const userSigner = userProviderAndSigner.signer;
 
   useEffect(() => {
@@ -401,14 +401,14 @@ function App(props) {
       </Stack>
 
       <Switch>
-        <Route exact path="/">
-          {/*
+        {/* <Route exact path="/">
+          
                 🎛 this scaffolding is full of commonly used components
                 this <Contract/> component will automatically parse your ABI
                 and give you a form to interact with it locally
-            */}
+           
 
-          {/* <Contract
+          <Contract
             name="Smile"
             customContract={writeContracts && writeContracts.Loogies}
             signer={userSigner}
@@ -426,13 +426,13 @@ function App(props) {
             address={address}
             blockExplorer={blockExplorer}
             contractConfig={contractConfig}
-          /> */}
-        </Route>
+          />
+        </Route> */}
         <Route exact path="/mintloogies">
           <div style={{ maxWidth: 820, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
             <Button
-              onClick={() => {
-                tx(writeContracts.Smile.mintItem());
+              onClick={async () => {
+                await tx(writeContracts.Smile.mintItem());
               }}
             >
               MINT
