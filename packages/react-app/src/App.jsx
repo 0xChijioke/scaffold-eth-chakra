@@ -68,7 +68,7 @@ const { ethers } = require("ethers");
 */
 
 /// 📡 What chain are your contracts deployed to?
-const initialNetwork = NETWORKS.localhost; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
+const initialNetwork = NETWORKS.goerli; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
 
 // 😬 Sorry for all the console logging
 const DEBUG = true;
@@ -431,7 +431,7 @@ function App(props) {
             </Button>
           </div>
           {/* */}
-          <Container boxShadow="dark-lg" rounded="3xl" p={4} w={"fit-content"}>
+          <Container boxShadow="dark-lg" rounded="2xl" p={4} w={"fit-content"}>
             <List>
               {yourSmile &&
                 yourSmile.map(item => {
@@ -448,7 +448,7 @@ function App(props) {
                           </div>
                         </Heading>
                         <Image h={"244"} src={item.image} />
-                        <div>{item.description}</div>
+                        {/* <div>{item.description}</div> */}
                       </Flex>
                       <Flex my={2} alignItems={"center"} justify={"center"} direction={"column"}>
                         <Flex direction={"row"} justify={"center"} align={"center"}>
@@ -492,7 +492,6 @@ function App(props) {
 
                           <Input
                             placeholder="HAPPI ID"
-                            // value={transferToTankId[id]}
                             onChange={newValue => {
                               console.log("newValue", newValue.target.value);
                               const update = {};
