@@ -52,8 +52,8 @@ contract Happi is ERC721Enumerable, IERC721Receiver {
 
   function tokenURI(uint256 id) public view override returns (string memory) {
       require(_exists(id), "not exist");
-      string memory name = string(abi.encodePacked(id.toString(), 'Happi #'));
-      string memory description = string(abi.encodePacked('Happi'));
+      string memory name = string(abi.encodePacked('#', id.toString(), ' Happi'));
+      string memory description = string(abi.encodePacked('Add some colorful smiles and be Happi'));
       string memory image = Base64.encode(bytes(generateSVGofTokenById(id)));
 
       return string(abi.encodePacked(
@@ -96,7 +96,7 @@ contract Happi is ERC721Enumerable, IERC721Receiver {
        '<rect x="0" y="0" width="370" height="370" stroke="black" fill="#001649" stroke-width="5"/>',
        // - (0.3, the scaling factor) * smile (cx, cy).
        // Without this, the smile move in rectangle translated towards bottom-right.
-       '<g transform="translate(-60 -62)">',
+       '<g transform="translate(0 -7)">',
        renderSmile(id),
        '</g>'
     ));

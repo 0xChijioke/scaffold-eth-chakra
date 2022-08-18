@@ -30,5 +30,5 @@ export default function Header({ link, title, subTitle, ...props }) {
 Header.defaultProps = {
   link: "https://github.com/EngrGord/Schaffold-buidls/tree/composable-SVG",
   title: "HappiVerse",
-  subTitle: "Combosable SVG",
+  subTitle: "On-chain SVG NFT",
 };

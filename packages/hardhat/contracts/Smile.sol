@@ -27,16 +27,20 @@ contract Smile is ERC721Enumerable, Ownable {
   }
 
   mapping (uint256 => bytes3) public color;
-   mapping(uint256 => bytes32) public genes;
+  mapping(uint256 => bytes32) public genes;
+  uint256 constant public price = 1; // 0.005 eth
+
  
 
   uint256 mintDeadline = block.timestamp + 1 weeks;
 
   function mintItem()
       public
+      payable
       returns (uint256)
   {
       require( block.timestamp < mintDeadline, "DONE MINTING");
+      //require(msg.value >= price, "Not enough ETH");
       _tokenIds.increment();
 
       uint256 id = _tokenIds.current();
@@ -51,7 +55,7 @@ contract Smile is ERC721Enumerable, Ownable {
 
   function tokenURI(uint256 id) public view override returns (string memory) {
       require(_exists(id), "not exist");
-      string memory name = string(abi.encodePacked(id.toString(), 'Smile #'));
+      string memory name = string(abi.encodePacked('#', id.toString(), ' Smile'));
       string memory description = string(abi.encodePacked('The color of your Smile is #',color[id].toColor()));
       string memory image = Base64.encode(bytes(generateSVGofTokenById(id)));
 

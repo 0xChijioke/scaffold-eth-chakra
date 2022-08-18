@@ -564,9 +564,7 @@ function App(props) {
                   return (
                     <ListItem key={id + "_" + item.uri + "_" + item.owner}>
                       <Flex direction={"column"}>
-                        <Heading color={"bisque"} fontFamily={"monospace"}>
-                          {item.name}
-                        </Heading>
+                        <Heading fontFamily={"monospace"}>{item.name}</Heading>
                         <Image borderRadius={"2xl"} src={item.image} />
                         <Text>{item.description}</Text>
                       </Flex>
