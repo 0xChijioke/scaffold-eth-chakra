@@ -90,6 +90,7 @@ export default function Transactor(providerOrSigner, gasPrice, etherscan) {
           });
         } else {
           toast({
+            status: "success",
             title: "Local Transaction Sent",
             description: result.hash,
             placement: "topRight",

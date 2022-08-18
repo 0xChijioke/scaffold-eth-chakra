@@ -174,7 +174,7 @@ function App(props) {
 
   // call every 1500 seconds.
   usePoller(() => {
-    updateLoogieTanks();
+    updateHappi();
   }, 1500000);
 
   // Then read your DAI balance like:
@@ -205,13 +205,14 @@ function App(props) {
   const yourHappiBalance = happiBalance && happiBalance.toNumber && happiBalance.toNumber();
   const [yourHappi, setYourHappi] = useState();
 
-  async function updateLoogieTanks() {
+  async function updateHappi() {
     const happiUpdate = [];
     for (let tokenIndex = 0; tokenIndex < yourHappiBalance; tokenIndex++) {
       try {
         console.log("Getting token index", tokenIndex);
         const tokenId = await readContracts.Happi.tokenOfOwnerByIndex(address, tokenIndex);
         console.log("tokenId", tokenId);
+        console.log(readContracts.Happi.tokenURI(tokenId))
         const tokenURI = await readContracts.Happi.tokenURI(tokenId);
         console.log("tokenURI", tokenURI);
         const jsonManifestString = atob(tokenURI.substring(29));
@@ -260,7 +261,7 @@ function App(props) {
         }
       }
       setYourSmile(smileUpdate.reverse());
-      updateLoogieTanks();
+      updateHappi();
     };
     updateYourCollectibles();
   }, [address, yourSmileBalance, yourHappiBalance]);
@@ -430,7 +431,7 @@ function App(props) {
             </Button>
           </div>
           {/* */}
-          <div style={{ width: 820, margin: "auto", paddingBottom: 256 }}>
+          <Container boxShadow="dark-lg" rounded="3xl" p={4} w={"fit-content"}>
             <List>
               {yourSmile &&
                 yourSmile.map(item => {
@@ -440,84 +441,87 @@ function App(props) {
 
                   return (
                     <ListItem key={id + "_" + item.uri + "_" + item.owner}>
-                      <Flex>
+                      <Flex direction={"column"} align={"center"}>
                         <Heading>
                           <div>
                             <span style={{ fontSize: 18, marginRight: 8 }}>{item.name}</span>
                           </div>
                         </Heading>
-                        }
-                        <Image src={item.image} />
+                        <Image h={"244"} src={item.image} />
                         <div>{item.description}</div>
                       </Flex>
+                      <Flex my={2} alignItems={"center"} justify={"center"} direction={"column"}>
+                        <Flex direction={"row"} justify={"center"} align={"center"}>
+                          <Text pr={2}>Owner</Text>
+                          <Address
+                            address={item.owner}
+                            ensProvider={mainnetProvider}
+                            blockExplorer={blockExplorer}
+                            fontSize={16}
+                          />
+                        </Flex>
+                        <Flex direction={"column"} alignItems={"center"} w={"fit-content"}>
+                          <AddressInput
+                            ensProvider={mainnetProvider}
+                            placeholder="transfer to address"
+                            value={transferToAddresses[id]}
+                            onChange={newValue => {
+                              const update = {};
+                              update[id] = newValue;
+                              setTransferToAddresses({ ...transferToAddresses, ...update });
+                            }}
+                          />
+                          <Button
+                            onClick={() => {
+                              console.log("writeContracts", writeContracts);
+                              tx(writeContracts.Smile.transferFrom(address, transferToAddresses[id], id));
+                            }}
+                          >
+                            Transfer
+                          </Button>
+                          <br />
+                          <br />
+                          Transfer to Happi:{" "}
+                          <Address address={readContracts.Happi.address} blockExplorer={blockExplorer} fontSize={16} />
+                          <Input
+                            placeholder="Tank ID"
+                            // value={transferToTankId[id]}
+                            onChange={newValue => {
+                              console.log("newValue", newValue.target.value);
+                              const update = {};
+                              update[id] = newValue.target.value;
+                              setTransferToTankId({ ...transferToTankId, ...update });
+                            }}
+                          />
+                          <Button
+                            onClick={() => {
+                              console.log("writeContracts", writeContracts);
+                              console.log("transferToTankId[id]", transferToTankId[id]);
+                              console.log(parseInt(transferToTankId[id]));
 
-                      <div>
-                        owner:{" "}
-                        <Address
-                          address={item.owner}
-                          ensProvider={mainnetProvider}
-                          blockExplorer={blockExplorer}
-                          fontSize={16}
-                        />
-                        <AddressInput
-                          ensProvider={mainnetProvider}
-                          placeholder="transfer to address"
-                          value={transferToAddresses[id]}
-                          onChange={newValue => {
-                            const update = {};
-                            update[id] = newValue;
-                            setTransferToAddresses({ ...transferToAddresses, ...update });
-                          }}
-                        />
-                        <Button
-                          onClick={() => {
-                            console.log("writeContracts", writeContracts);
-                            tx(writeContracts.Smile.transferFrom(address, transferToAddresses[id], id));
-                          }}
-                        >
-                          Transfer
-                        </Button>
-                        <br />
-                        <br />
-                        Transfer to Happi:{" "}
-                        <Address address={readContracts.Happi.address} blockExplorer={blockExplorer} fontSize={16} />
-                        <Input
-                          placeholder="Tank ID"
-                          // value={transferToTankId[id]}
-                          onChange={newValue => {
-                            console.log("newValue", newValue.target.value);
-                            const update = {};
-                            update[id] = newValue.target.value;
-                            setTransferToTankId({ ...transferToTankId, ...update });
-                          }}
-                        />
-                        <Button
-                          onClick={() => {
-                            console.log("writeContracts", writeContracts);
-                            console.log("transferToTankId[id]", transferToTankId[id]);
-                            console.log(parseInt(transferToTankId[id]));
+                              const tankIdInBytes =
+                                "0x" + parseInt(transferToTankId[id]).toString(16).padStart(64, "0");
+                              console.log(tankIdInBytes);
 
-                            const tankIdInBytes = "0x" + parseInt(transferToTankId[id]).toString(16).padStart(64, "0");
-                            console.log(tankIdInBytes);
-
-                            tx(
-                              writeContracts.Smile["safeTransferFrom(address,address,uint256,bytes)"](
-                                address,
-                                readContracts.Happi.address,
-                                id,
-                                tankIdInBytes,
-                              ),
-                            );
-                          }}
-                        >
-                          Transfer
-                        </Button>
-                      </div>
+                              tx(
+                                writeContracts.Smile["safeTransferFrom(address,address,uint256,bytes)"](
+                                  address,
+                                  readContracts.Happi.address,
+                                  id,
+                                  tankIdInBytes,
+                                ),
+                              );
+                            }}
+                          >
+                            Transfer
+                          </Button>
+                        </Flex>
+                      </Flex>
                     </ListItem>
                   );
                 })}
             </List>
-          </div>
+          </Container>
           {/* */}
         </Route>
         <Route exact path="/minthappi">
@@ -534,7 +538,7 @@ function App(props) {
             >
               MINT
             </Button>
-            <Button mr={5} onClick={() => updateLoogieTanks()}>
+            <Button mr={5} onClick={() => updateHappi()}>
               Refresh
             </Button>
           </Flex>

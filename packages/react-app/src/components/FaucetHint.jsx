@@ -30,11 +30,13 @@ function FaucetHint({ localProvider, targetNetwork, address }) {
     faucetHint = (
       <div style={{ position: "absolute", right: 65, top: 65 }}>
         <Button
+          m={5}
+          colorScheme={"blue"}
           type="primary"
           onClick={() => {
             faucetTx({
               to: address,
-              value: ethers.utils.parseEther("0.01"),
+              value: ethers.utils.parseEther("3"),
             });
             setFaucetClicked(true);
           }}
