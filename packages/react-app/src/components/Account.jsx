@@ -60,7 +60,7 @@ export default function Account({
     <>
       <div style={{ display: "flex", align: "center" }}>
         <Flex align={"center"} justify={"center"} border={1} spacing={3}>
-          <Balance address={address} provider={localProvider} price={price} size={"1.125rem"} />
+          <Balance address={address} provider={localProvider} price={price} size={"1rem"} />
 
           {address && (
             <Address
