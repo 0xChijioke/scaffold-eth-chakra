@@ -27,6 +27,7 @@ contract Smile is ERC721Enumerable, Ownable {
   }
 
   mapping (uint256 => bytes3) public color;
+   mapping(uint256 => bytes32) public genes;
  
 
   uint256 mintDeadline = block.timestamp + 1 weeks;
@@ -43,15 +44,15 @@ contract Smile is ERC721Enumerable, Ownable {
 
       bytes32 predictableRandom = keccak256(abi.encodePacked( blockhash(block.number-1), msg.sender, address(this), id ));
       color[id] = bytes2(predictableRandom[0]) | ( bytes2(predictableRandom[1]) >> 8 ) | ( bytes3(predictableRandom[2]) >> 16 );
-      
+      genes[id] = keccak256(abi.encodePacked( blockhash(block.number-1), msg.sender, address(this) ));
 
       return id;
   }
 
   function tokenURI(uint256 id) public view override returns (string memory) {
       require(_exists(id), "not exist");
-      string memory name = string(abi.encodePacked('Smile #',id.toString()));
-      string memory description = string(abi.encodePacked('This Smile is the color #',color[id].toColor(),'!!!'));
+      string memory name = string(abi.encodePacked(id.toString(), 'Smile #'));
+      string memory description = string(abi.encodePacked('The color of your Smile is #',color[id].toColor()));
       string memory image = Base64.encode(bytes(generateSVGofTokenById(id)));
 
       return

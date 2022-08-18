@@ -212,7 +212,7 @@ function App(props) {
         console.log("Getting token index", tokenIndex);
         const tokenId = await readContracts.Happi.tokenOfOwnerByIndex(address, tokenIndex);
         console.log("tokenId", tokenId);
-        console.log(readContracts.Happi.tokenURI(tokenId))
+        console.log(readContracts.Happi.tokenURI(tokenId));
         const tokenURI = await readContracts.Happi.tokenURI(tokenId);
         console.log("tokenURI", tokenURI);
         const jsonManifestString = atob(tokenURI.substring(29));
@@ -472,6 +472,7 @@ function App(props) {
                             }}
                           />
                           <Button
+                            my={3}
                             onClick={() => {
                               console.log("writeContracts", writeContracts);
                               tx(writeContracts.Smile.transferFrom(address, transferToAddresses[id], id));
@@ -480,11 +481,17 @@ function App(props) {
                             Transfer
                           </Button>
                           <br />
-                          <br />
-                          Transfer to Happi:{" "}
-                          <Address address={readContracts.Happi.address} blockExplorer={blockExplorer} fontSize={16} />
+                          <Flex direction={"row"} justify={"center"} align={"center"}>
+                            <Text pr={2}>Transfer to Happi:</Text>
+                            <Address
+                              address={readContracts.Happi.address}
+                              blockExplorer={blockExplorer}
+                              fontSize={16}
+                            />
+                          </Flex>
+
                           <Input
-                            placeholder="Tank ID"
+                            placeholder="HAPPI ID"
                             // value={transferToTankId[id]}
                             onChange={newValue => {
                               console.log("newValue", newValue.target.value);
@@ -493,7 +500,9 @@ function App(props) {
                               setTransferToTankId({ ...transferToTankId, ...update });
                             }}
                           />
+
                           <Button
+                            my={2}
                             onClick={() => {
                               console.log("writeContracts", writeContracts);
                               console.log("transferToTankId[id]", transferToTankId[id]);

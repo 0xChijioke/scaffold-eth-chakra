@@ -42,7 +42,7 @@ contract Happi is ERC721Enumerable, IERC721Receiver {
 
   function returnAllSmiles(uint256 _id) external {
     require(smileById[_id].length > 0, "No Joy!");
-    require(msg.sender == ownerOf(_id), "only a happy person can return smiles");
+    require(msg.sender == ownerOf(_id), "Only a happy person can return smiles");
     for (uint256 i = 0; i < smileById[_id].length; i++) {
       smile.transferFrom(address(this), ownerOf(_id), smileById[_id][i]);
     }
@@ -52,7 +52,7 @@ contract Happi is ERC721Enumerable, IERC721Receiver {
 
   function tokenURI(uint256 id) public view override returns (string memory) {
       require(_exists(id), "not exist");
-      string memory name = string(abi.encodePacked('Happi #',id.toString()));
+      string memory name = string(abi.encodePacked(id.toString(), 'Happi #'));
       string memory description = string(abi.encodePacked('Happi'));
       string memory image = Base64.encode(bytes(generateSVGofTokenById(id)));
 
@@ -94,8 +94,8 @@ contract Happi is ERC721Enumerable, IERC721Receiver {
   function renderTokenById(uint256 id) public view returns (string memory) {
     string memory render = string(abi.encodePacked(
        '<rect x="0" y="0" width="370" height="370" stroke="black" fill="#001649" stroke-width="5"/>',
-       // - (0.3, the scaling factor) * loogie head's (cx, cy).
-       // Without this, the loogies move in rectangle translated towards bottom-right.
+       // - (0.3, the scaling factor) * smile (cx, cy).
+       // Without this, the smile move in rectangle translated towards bottom-right.
        '<g transform="translate(-60 -62)">',
        renderSmile(id),
        '</g>'
@@ -127,7 +127,7 @@ contract Happi is ERC721Enumerable, IERC721Receiver {
       smileSVG = string(abi.encodePacked(
         smileSVG,
         '<g>',
-        '<animateTransform attributeName="transform" dur="1500s" fill="freeze" type="translate" additive="sum" ',
+        '<animateTransform attributeName="transform" dur="100s" fill="freeze" type="translate" additive="sum" ',
         'values="', newX.toString(), ' ', newY.toString(), ';'));
 
       for (uint8 j = 0; j < 100; j++) {
@@ -193,19 +193,19 @@ contract Happi is ERC721Enumerable, IERC721Receiver {
   function onERC721Received(
       address operator,
       address from,
-      uint256 loogieTokenId,
-      bytes calldata tankIdData) external override returns (bytes4) {
+      uint256 smileTokenId,
+      bytes calldata happiIdData) external override returns (bytes4) {
 
-      uint256 tankId = toUint256(tankIdData);
-      require(ownerOf(tankId) == from, "you can only add smiles to your own happi.");
-      require(smileById[tankId].length < 256, "Excess joy! Cant take anymore.");
+      uint256 happiId = toUint256(happiIdData);
+      require(ownerOf(happiId) == from, "you can only add smiles to your own happi.");
+      require(smileById[happiId].length < 256, "Excess joy! Cant take anymore.");
 
-      smileById[tankId].push(loogieTokenId);
+      smileById[happiId].push(smileTokenId);
 
-      bytes32 randish = keccak256(abi.encodePacked( blockhash(block.number-1), from, address(this), loogieTokenId, tankIdData  ));
-      x[loogieTokenId] = uint8(randish[0]);
-      y[loogieTokenId] = uint8(randish[1]);
-      blockAdded[loogieTokenId] = block.number;
+      bytes32 randish = keccak256(abi.encodePacked( blockhash(block.number-1), from, address(this), smileTokenId, happiIdData  ));
+      x[smileTokenId] = uint8(randish[0]);
+      y[smileTokenId] = uint8(randish[1]);
+      blockAdded[smileTokenId] = block.number;
 
       return this.onERC721Received.selector;
     }
