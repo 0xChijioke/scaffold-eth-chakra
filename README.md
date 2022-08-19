@@ -1,4 +1,56 @@
-# 🏗 Scaffold-ETH
+# Happiverse 🏗 Scaffold-ETH
+
+[Live demo](https://behappi.surge.sh/) Happiverse made up of two smart contracts Smile.sol and Happi.sol which are currently deployed on Rinkeby for now. 
+This build is a composition of the ,[composable-svg-nft]( https://github.com/scaffold-eth/scaffold-eth/tree/composable-svg-nft), and  [oe-loogie-tank](https://github.com/scaffold-eth/scaffold-eth/tree/oe-loogie-tank-prod) branches of schaffold-eth.
+
+
+This Scaffold-eth buidl is based on the idea of on-chain composable NFTs, where on-chain nfts hold other nfts, the possibilties of this concept is endless.
+Forks this buidl and thinker around with it locally!
+
+
+Any nft that implements the `public` render function can be rendered into the Happiverse, this is possible because Happi.sol inherits the `IERCReciever` which allow this nft to recieve and render other nfts that implement the `public` render fuction.
+
+
+```
+ // to receive ERC721 tokens
+  function onERC721Received(
+      address operator,
+      address from,
+      uint256 smileTokenId,
+      bytes calldata happiIdData) external override returns (bytes4) {
+
+      uint256 happiId = toUint256(happiIdData);
+      require(ownerOf(happiId) == from, "you can only add smiles to your own happi.");
+      require(smileById[happiId].length < 256, "Excess joy! Cant take anymore.");
+
+      smileById[happiId].push(smileTokenId);
+
+      bytes32 randish = keccak256(abi.encodePacked( blockhash(block.number-1), from, address(this), smileTokenId, happiIdData  ));
+      x[smileTokenId] = uint8(randish[0]);
+      y[smileTokenId] = uint8(randish[1]);
+      blockAdded[smileTokenId] = block.number;
+
+      return this.onERC721Received.selector;
+    }
+```
+
+Smiles can transfered to Happi and is rendered because it implements the `public` render function which allows other contracts to render its data.
+
+
+```
+// Visibility is `public` to enable it being called by other contracts for composition.
+  function renderTokenById(uint256 id) public view returns (string memory) {
+    string memory render = string(abi.encodePacked(
+      '<g transform="translate(60 60)"><circle r="50" stroke="#000" stroke-width="2" fill="#',
+      color[id].toColor(),
+      '"/><circle cx="-20" cy="-10" r="5"/><circle cx="20" cy="-10" r="5"/><path fill="none" stroke="#000" stroke-width="3" stroke-linecap="round" d="M-20 15c0 20 40 20 40 0"/></g>'
+     
+        ));
+
+    return render;
+  }
+```
+
 
 > everything you need to build on Ethereum! 🚀
 
