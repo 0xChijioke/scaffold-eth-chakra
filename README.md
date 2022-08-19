@@ -1,7 +1,8 @@
 # Happiverse 🏗 Scaffold-ETH
 
-[Live demo](https://behappi.surge.sh/) Happiverse made up of two smart contracts Smile.sol and Happi.sol which are currently deployed on Rinkeby for now. 
-This build is a composition of the ,[composable-svg-nft]( https://github.com/scaffold-eth/scaffold-eth/tree/composable-svg-nft), and  [oe-loogie-tank](https://github.com/scaffold-eth/scaffold-eth/tree/oe-loogie-tank-prod) branches of schaffold-eth.
+[Happiverse](https://behappi.surge.sh/) is made up of two smart contracts, Smile.sol and Happi.sol which are deployed on Rinkeby for now. 
+
+This build is a composition of the [composable-svg-nft]( https://github.com/scaffold-eth/scaffold-eth/tree/composable-svg-nft), and [oe-loogie-tank](https://github.com/scaffold-eth/scaffold-eth/tree/oe-loogie-tank-prod) branches of schaffold-eth.
 
 
 This Scaffold-eth buidl is based on the idea of on-chain composable NFTs, where on-chain nfts hold other nfts, the possibilties of this concept is endless.
