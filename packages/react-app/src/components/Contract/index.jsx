@@ -1,4 +1,4 @@
-import { Box } from "@chakra-ui/react";
+import { Flex, Heading } from "@chakra-ui/react";
 import { useContractExistsAtAddress, useContractLoader } from "eth-hooks";
 import React, { useMemo, useState } from "react";
 import Address from "../Address";
@@ -83,7 +83,6 @@ export default function Contract({
       contractFuncInfo[1].stateMutability === "view" || contractFuncInfo[1].stateMutability === "pure"
         ? contract[contractFuncInfo[0]]
         : contract.connect(signer)[contractFuncInfo[0]];
-        console.log(contractFuncInfo[0])
 
     if (typeof contractFunc === "function") {
       if (isQueryable(contractFuncInfo[1])) {
@@ -117,22 +116,27 @@ export default function Contract({
 
   return (
     <div style={{ margin: "auto", width: "70vw" }}>
-      <Box
-        title={
-          <div style={{ fontSize: 24 }}>
-            {name}
-            <div style={{ float: "right" }}>
-              <Address value={address} blockExplorer={blockExplorer} />
-              <Balance address={address} provider={provider} price={price} />
-            </div>
-          </div>
-        }
+      <Flex
         size="lg"
+        direction={"column"}
+        justify={"center"}
+        align={"center"}
         style={{ marginTop: 25, width: "100%" }}
         isLoading={contractDisplay && contractDisplay.length <= 0}
       >
+        <Heading alignContent={"end"} w={"fit-content"}>
+          <div style={{ fontSize: 24 }}>
+            {name}
+            <div style={{ float: "right", padding: 7 }}>
+              <Flex direction={"row"}>
+                <Address value={address} blockExplorer={blockExplorer} />
+                <Balance address={address} provider={provider} price={price} />
+              </Flex>
+            </div>
+          </div>
+        </Heading>
         {contractIsDeployed ? contractDisplay : noContractDisplay}
-      </Box>
+      </Flex>
     </div>
   );
 }

@@ -14,7 +14,7 @@ const getFunctionInputKey = (functionInfo, input, inputIndex) => {
 
 export default function FunctionForm({ contractFunction, functionInfo, provider, gasPrice, triggerRefresh }) {
   const [form, setForm] = useState({});
-  const [txValue, setTxValue] = useState();
+  const [txValue, setTxValue] = useState("");
   const [returnValue, setReturnValue] = useState();
 
   const tx = Transactor(provider, gasPrice);
@@ -25,7 +25,7 @@ export default function FunctionForm({ contractFunction, functionInfo, provider,
     let buttons = "";
     if (input.type === "bytes32") {
       buttons = (
-        <Tooltip  label="to bytes32">
+        <Tooltip label="to bytes32">
           <div
             type="dashed"
             style={{ cursor: "pointer" }}
