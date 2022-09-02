@@ -1,4 +1,4 @@
-import { Button, Box, Flex, Text, Spinner, useClipboard, toast, useToast } from "@chakra-ui/react";
+import { Flex, Text, Spinner, useClipboard } from "@chakra-ui/react";
 import React from "react";
 import Blockies from "react-blockies";
 import { useLookupAddress } from "eth-hooks/dapps/ens";
@@ -33,8 +33,7 @@ export default function Address(props) {
   const validEnsCheck = ensSplit && ensSplit[ensSplit.length - 1] === "eth";
   const etherscanLink = blockExplorerLink(address, props.blockExplorer);
   let displayAddress = address?.substr(0, 5) + "..." + address?.substr(-4);
-  const { hasCopied, onCopy } = useClipboard(address);
-  const toast = useToast();
+  const { onCopy } = useClipboard(address);
 
   if (validEnsCheck) {
     displayAddress = ens;

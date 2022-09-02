@@ -111,9 +111,8 @@ export default function AddressInput(props) {
           id="0xAddress" // name it something other than address for auto fill doxxing
           name="0xAddress" // name it something other than address for auto fill doxxing
           autoFocus={props.autoFocus}
-          color="white"
           w={"100%"}
-          borderColor='gray'
+          borderColor="gray"
           placeholder={props.placeholder ? props.placeholder : "address"}
           value={ethers.utils.isAddress(currentValue) && !isENS(currentValue) && isENS(ens) ? ens : currentValue}
           onChange={e => {
