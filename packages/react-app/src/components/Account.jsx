@@ -3,6 +3,7 @@ import React from "react";
 
 import Address from "./Address";
 import Balance from "./Balance";
+import Wallet from "./Wallet";
 
 /**
   ~ What it does? ~
@@ -61,7 +62,19 @@ export default function Account({
       <div style={{ display: "flex", align: "center" }}>
         <Flex align={"center"} justify={"center"} border={1} spacing={3}>
           <Balance address={address} provider={localProvider} price={price} size={"1rem"} />
-
+          {!isContract && (
+            <div style={{ marginRight: 5 }}>
+              <Wallet
+                address={address}
+                provider={localProvider}
+                signer={userSigner}
+                ensProvider={mainnetProvider}
+                price={price}
+                size={22}
+                padding={"0px"}
+              />
+            </div>
+          )}
           {address && (
             <Address
               address={address}
