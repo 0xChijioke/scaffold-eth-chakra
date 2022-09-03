@@ -10,13 +10,20 @@ contract YourContract {
   event SetPurpose(address sender, string purpose);
 
   string public purpose = "Building Unstoppable Apps!!!";
+  bytes32 test;
 
   constructor() payable {
     // what should we do on deploy?
   }
 
-  function setPurpose(string memory newPurpose) public payable {
+  function setPurpose(string memory newPurpose) public {
       purpose = newPurpose;
+      console.log(msg.sender,"set purpose to",purpose);
+      emit SetPurpose(msg.sender, purpose);
+  }
+
+  function Purpose(bytes32 Test) public payable {
+      test = Test;
       console.log(msg.sender,"set purpose to",purpose);
       emit SetPurpose(msg.sender, purpose);
   }

@@ -1,4 +1,16 @@
-import { Button, VStack, Divider, Input, HStack, Tooltip, InputGroup, InputRightAddon } from "@chakra-ui/react";
+import {
+  Button,
+  VStack,
+  Divider,
+  Input,
+  HStack,
+  Tooltip,
+  InputGroup,
+  InputRightAddon,
+  Stack,
+  Grid,
+  GridItem,
+} from "@chakra-ui/react";
 import React, { useState } from "react";
 import Blockies from "react-blockies";
 
@@ -21,6 +33,9 @@ export default function FunctionForm({ contractFunction, functionInfo, provider,
 
   const inputs = functionInfo.inputs.map((input, inputIndex) => {
     const key = getFunctionInputKey(functionInfo, input, inputIndex);
+    console.log(functionInfo);
+    console.log(input);
+    console.log(inputIndex);
 
     let buttons = "";
     if (input.type === "bytes32") {
@@ -96,23 +111,24 @@ export default function FunctionForm({ contractFunction, functionInfo, provider,
 
     return (
       <div style={{ margin: 2 }} key={key}>
-        <Input
-          size="large"
-          placeholder={input.name ? input.type + " " + input.name : input.type}
-          autoComplete="off"
-          value={form[key]}
-          name={key}
-          onChange={event => {
-            const formUpdate = { ...form };
-            formUpdate[event.target.name] = event.target.value;
-            setForm(formUpdate);
-          }}
-          suffix={buttons}
-        />
+        <InputGroup>
+          <Input
+            size="large"
+            placeholder={input.name ? input.type + " " + input.name : input.type}
+            autoComplete="off"
+            value={form[key]}
+            name={key}
+            onChange={event => {
+              const formUpdate = { ...form };
+              formUpdate[event.target.name] = event.target.value;
+              setForm(formUpdate);
+            }}
+          />
+          <InputRightAddon children={buttons} />
+        </InputGroup>
       </div>
     );
   });
-
   const txValueInput = (
     <div style={{ margin: 2 }} key="txValueInput">
       <InputGroup>
@@ -121,7 +137,7 @@ export default function FunctionForm({ contractFunction, functionInfo, provider,
           children={
             <div>
               <HStack>
-                <VStack span={16}>
+                <VStack>
                   <Tooltip placement="right" title=" * 10^18 ">
                     <div
                       type="dashed"
@@ -135,10 +151,9 @@ export default function FunctionForm({ contractFunction, functionInfo, provider,
                     </div>
                   </Tooltip>
                 </VStack>
-                <VStack span={16}>
+                <VStack>
                   <Tooltip placement="right" title="number to hex">
                     <div
-                      type="dashed"
                       style={{ cursor: "pointer" }}
                       onClick={async () => {
                         setTxValue(BigNumber.from(txValue).toHexString());
@@ -240,21 +255,10 @@ export default function FunctionForm({ contractFunction, functionInfo, provider,
 
   return (
     <div>
-      <HStack>
-        <VStack
-          span={8}
-          style={{
-            textAlign: "right",
-            opacity: 0.333,
-            paddingRight: 6,
-            fontSize: 24,
-          }}
-        >
-          {functionInfo.name}
-        </VStack>
-        <VStack span={16}>{inputs}</VStack>
-      </HStack>
-      <Divider />
+      <Grid templateColumns="repeat(2, 1fr)" gap={2}>
+        <GridItem>{functionInfo.name}</GridItem>
+        <GridItem>{inputs}</GridItem>
+      </Grid>
     </div>
   );
 }
