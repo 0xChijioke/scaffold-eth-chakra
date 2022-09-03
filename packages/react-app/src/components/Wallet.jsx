@@ -78,6 +78,7 @@ export default function Wallet(props) {
     <Tooltip label="Wallet">
       <RiWallet3Fill
         onClick={() => {
+          onOpen();
           setOpen(!isOpen);
         }}
         rotate={-90}
@@ -115,6 +116,7 @@ export default function Wallet(props) {
     );
     receiveButton = (
       <Button
+        mx={2}
         key="hide"
         onClick={() => {
           setQr("");
@@ -125,6 +127,7 @@ export default function Wallet(props) {
     );
     privateKeyButton = (
       <Button
+        mx={2}
         key="hide"
         onClick={() => {
           setPK(selectedAddress);
@@ -281,6 +284,7 @@ export default function Wallet(props) {
     );
     receiveButton = (
       <Button
+        mx={2}
         key="receive"
         onClick={() => {
           setQr(selectedAddress);
@@ -292,6 +296,7 @@ export default function Wallet(props) {
     );
     privateKeyButton = (
       <Button
+        mx={2}
         key="hide"
         onClick={() => {
           setPK(selectedAddress);
@@ -308,6 +313,7 @@ export default function Wallet(props) {
       {providerSend}
 
       <Modal
+        size={"lg"}
         onOk={() => {
           setQr();
           setPK();
@@ -341,8 +347,9 @@ export default function Wallet(props) {
               receiveButton,
               <Button
                 key="submit"
+                mx={2}
                 disabled={!amount || !toAddress || qr}
-                loading={false}
+                isLoading={false}
                 onClick={() => {
                   const tx = Transactor(props.signer || props.provider);
 
