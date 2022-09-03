@@ -11,6 +11,7 @@ contract YourContract {
 
   string public purpose = "Building Unstoppable Apps!!!";
   bytes32 test;
+  uint256 public constant threshold = 1 ether;
 
   constructor() payable {
     // what should we do on deploy?

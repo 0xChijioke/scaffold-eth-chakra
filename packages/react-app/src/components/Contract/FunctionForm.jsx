@@ -42,7 +42,6 @@ export default function FunctionForm({ contractFunction, functionInfo, provider,
       buttons = (
         <Tooltip label="to bytes32">
           <div
-            type="dashed"
             style={{ cursor: "pointer" }}
             onClick={async () => {
               if (utils.isHexString(form[key])) {
@@ -64,7 +63,6 @@ export default function FunctionForm({ contractFunction, functionInfo, provider,
       buttons = (
         <Tooltip label="to hex">
           <div
-            type="dashed"
             style={{ cursor: "pointer" }}
             onClick={async () => {
               if (utils.isHexString(form[key])) {
@@ -86,7 +84,6 @@ export default function FunctionForm({ contractFunction, functionInfo, provider,
       buttons = (
         <Tooltip label="* 10 ** 18">
           <div
-            type="dashed"
             style={{ cursor: "pointer" }}
             onClick={async () => {
               const formUpdate = { ...form };
@@ -102,7 +99,7 @@ export default function FunctionForm({ contractFunction, functionInfo, provider,
       const possibleAddress = form[key] && form[key].toLowerCase && form[key].toLowerCase().trim();
       if (possibleAddress && possibleAddress.length === 42) {
         buttons = (
-          <Tooltip placement="right" title="blockie">
+          <Tooltip label="blockie">
             <Blockies seed={possibleAddress} scale={3} />
           </Tooltip>
         );
@@ -113,7 +110,7 @@ export default function FunctionForm({ contractFunction, functionInfo, provider,
       <div style={{ margin: 2 }} key={key}>
         <InputGroup>
           <Input
-            size="large"
+            size="lg"
             placeholder={input.name ? input.type + " " + input.name : input.type}
             autoComplete="off"
             value={form[key]}
@@ -124,7 +121,7 @@ export default function FunctionForm({ contractFunction, functionInfo, provider,
               setForm(formUpdate);
             }}
           />
-          <InputRightAddon children={buttons} />
+          {buttons && <InputRightAddon h={"auto"} children={buttons} />}
         </InputGroup>
       </div>
     );
@@ -138,9 +135,8 @@ export default function FunctionForm({ contractFunction, functionInfo, provider,
             <div>
               <HStack>
                 <VStack>
-                  <Tooltip placement="right" title=" * 10^18 ">
+                  <Tooltip label=" * 10^18 ">
                     <div
-                      type="dashed"
                       style={{ cursor: "pointer" }}
                       onClick={async () => {
                         const floatValue = parseFloat(txValue);
@@ -152,7 +148,7 @@ export default function FunctionForm({ contractFunction, functionInfo, provider,
                   </Tooltip>
                 </VStack>
                 <VStack>
-                  <Tooltip placement="right" title="number to hex">
+                  <Tooltip label="number to hex">
                     <div
                       style={{ cursor: "pointer" }}
                       onClick={async () => {
@@ -183,79 +179,87 @@ export default function FunctionForm({ contractFunction, functionInfo, provider,
 
   const buttonIcon =
     functionInfo.type === "call" ? (
-      <Button style={{ marginLeft: -32 }}>Read📡</Button>
+      <Button variant={"ghost"}>Read📡</Button>
     ) : (
-      <Button style={{ marginLeft: -32 }}>Send💸</Button>
+      <Button variant={"ghost"}>Send💸</Button>
     );
   inputs.push(
     <div style={{ cursor: "pointer", margin: 2 }} key="goButton">
-      <Input
-        onChange={e => setReturnValue(e.target.value)}
-        defaultValue=""
-        bordered={false}
-        disabled
-        value={returnValue}
-        suffix={
-          <div
-            style={{ width: 50, height: 30, margin: 0 }}
-            type="default"
-            onClick={async () => {
-              const args = functionInfo.inputs.map((input, inputIndex) => {
-                const key = getFunctionInputKey(functionInfo, input, inputIndex);
-                let value = form[key];
-                if (["array", "tuple"].includes(input.baseType)) {
-                  value = JSON.parse(value);
-                } else if (input.type === "bool") {
-                  if (value === "true" || value === "1" || value === "0x1" || value === "0x01" || value === "0x0001") {
-                    value = 1;
-                  } else {
-                    value = 0;
+      <InputGroup>
+        <Input
+          onChange={e => setReturnValue(e.target.value)}
+          defaultValue=""
+          disabled
+          border={"firebrick"}
+          value={returnValue}
+        />
+        <InputRightAddon
+          children={
+            <div
+              onClick={async () => {
+                const args = functionInfo.inputs.map((input, inputIndex) => {
+                  const key = getFunctionInputKey(functionInfo, input, inputIndex);
+                  let value = form[key];
+                  if (["array", "tuple"].includes(input.baseType)) {
+                    value = JSON.parse(value);
+                  } else if (input.type === "bool") {
+                    if (
+                      value === "true" ||
+                      value === "1" ||
+                      value === "0x1" ||
+                      value === "0x01" ||
+                      value === "0x0001"
+                    ) {
+                      value = 1;
+                    } else {
+                      value = 0;
+                    }
                   }
-                }
-                return value;
-              });
+                  return value;
+                });
 
-              let result;
-              if (functionInfo.stateMutability === "view" || functionInfo.stateMutability === "pure") {
-                try {
-                  const returned = await contractFunction(...args);
+                let result;
+                if (functionInfo.stateMutability === "view" || functionInfo.stateMutability === "pure") {
+                  try {
+                    const returned = await contractFunction(...args);
+                    handleForm(returned);
+                    result = tryToDisplayAsText(returned);
+                  } catch (err) {
+                    console.error(err);
+                  }
+                } else {
+                  const overrides = {};
+                  if (txValue) {
+                    overrides.value = txValue; // ethers.utils.parseEther()
+                  }
+                  if (gasPrice) {
+                    overrides.gasPrice = gasPrice;
+                  }
+                  // Uncomment this if you want to skip the gas estimation for each transaction
+                  // overrides.gasLimit = hexlify(1200000);
+
+                  // console.log("Running with extras",extras)
+                  const returned = await tx(contractFunction(...args, overrides));
                   handleForm(returned);
-                  result = tryToDisplayAsText(returned);
-                } catch (err) {
-                  console.error(err);
+                  result = tryToDisplay(returned);
                 }
-              } else {
-                const overrides = {};
-                if (txValue) {
-                  overrides.value = txValue; // ethers.utils.parseEther()
-                }
-                if (gasPrice) {
-                  overrides.gasPrice = gasPrice;
-                }
-                // Uncomment this if you want to skip the gas estimation for each transaction
-                // overrides.gasLimit = hexlify(1200000);
 
-                // console.log("Running with extras",extras)
-                const returned = await tx(contractFunction(...args, overrides));
-                handleForm(returned);
-                result = tryToDisplay(returned);
-              }
-
-              console.log("SETTING RESULT:", result);
-              setReturnValue(result);
-              triggerRefresh(true);
-            }}
-          >
-            {buttonIcon}
-          </div>
-        }
-      />
+                console.log("SETTING RESULT:", result);
+                setReturnValue(result);
+                triggerRefresh(true);
+              }}
+            >
+              {buttonIcon}
+            </div>
+          }
+        />
+      </InputGroup>
     </div>,
   );
 
   return (
     <div>
-      <Grid templateColumns="repeat(2, 1fr)" gap={2}>
+      <Grid templateColumns="repeat(2, 1fr)" gap={9}>
         <GridItem>{functionInfo.name}</GridItem>
         <GridItem>{inputs}</GridItem>
       </Grid>
