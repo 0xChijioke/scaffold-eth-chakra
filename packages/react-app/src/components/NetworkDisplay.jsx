@@ -3,15 +3,8 @@ import React from "react";
 
 import { NETWORK } from "../constants";
 
-function NetworkDisplay({
-  NETWORKCHECK,
-  localChainId,
-  selectedChainId,
-  targetNetwork,
-  USE_NETWORK_SELECTOR,
-  logoutOfWeb3Modal,
-}) {
-  const { isOpen: isVisible, onClose, onOpen } = useDisclosure();
+function NetworkDisplay({ NETWORKCHECK, localChainId, selectedChainId, targetNetwork }) {
+  const { onClose } = useDisclosure();
   let networkDisplay = "";
   if (NETWORKCHECK && localChainId && selectedChainId && localChainId !== selectedChainId) {
     const networkSelected = NETWORK(selectedChainId);
