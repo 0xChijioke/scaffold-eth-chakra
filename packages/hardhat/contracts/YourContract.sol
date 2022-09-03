@@ -10,8 +10,6 @@ contract YourContract {
   event SetPurpose(address sender, string purpose);
 
   string public purpose = "Building Unstoppable Apps!!!";
-  bytes32 test;
-  uint256 public constant threshold = 1 ether;
 
   constructor() payable {
     // what should we do on deploy?
@@ -19,12 +17,6 @@ contract YourContract {
 
   function setPurpose(string memory newPurpose) public {
       purpose = newPurpose;
-      console.log(msg.sender,"set purpose to",purpose);
-      emit SetPurpose(msg.sender, purpose);
-  }
-
-  function Purpose(bytes32 Test) public payable {
-      test = Test;
       console.log(msg.sender,"set purpose to",purpose);
       emit SetPurpose(msg.sender, purpose);
   }

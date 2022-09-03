@@ -263,6 +263,7 @@ export default function FunctionForm({ contractFunction, functionInfo, provider,
         <GridItem>{functionInfo.name}</GridItem>
         <GridItem>{inputs}</GridItem>
       </Grid>
+      <Divider my={4} orientation="horizontal" />
     </div>
   );
 }

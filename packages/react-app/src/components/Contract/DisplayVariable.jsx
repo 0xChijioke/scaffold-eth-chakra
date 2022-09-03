@@ -1,4 +1,4 @@
-import { Button, VStack, Divider, HStack } from "@chakra-ui/react";
+import { Box, Button, Divider, Flex, Grid, GridItem, Text } from "@chakra-ui/react";
 import React, { useCallback, useEffect, useState } from "react";
 
 import { tryToDisplay } from "./utils";
@@ -22,9 +22,8 @@ const DisplayVariable = ({ contractFunction, functionInfo, refreshRequired, trig
 
   return (
     <div>
-      <HStack>
-        <VStack
-          span={8}
+      <Grid templateColumns="repeat(3, 1fr)" gap={6}>
+        <GridItem
           style={{
             textAlign: "right",
             opacity: 0.333,
@@ -33,17 +32,21 @@ const DisplayVariable = ({ contractFunction, functionInfo, refreshRequired, trig
           }}
         >
           {functionInfo.name}
-        </VStack>
-        <VStack span={14}>
-          <h2>{tryToDisplay(variable, false, blockExplorer)}</h2>
-        </VStack>
-        <VStack span={2}>
+        </GridItem>
+        <GridItem>
+          <Box>
+            <h2>{tryToDisplay(variable, false, blockExplorer)}</h2>
+          </Box>
+        </GridItem>
+        <GridItem>
           <h2>
-            <Button type="link" onClick={refresh} icon="🔄" />
+            <Button variant={"link"} onClick={refresh}>
+              🔄
+            </Button>
           </h2>
-        </VStack>
-      </HStack>
-      <Divider />
+        </GridItem>
+      </Grid>
+      <Divider my={4} orientation="horizontal" />
     </div>
   );
 };

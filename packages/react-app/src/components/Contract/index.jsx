@@ -1,4 +1,4 @@
-import { Flex, Heading } from "@chakra-ui/react";
+import { border, Box, Flex, Heading } from "@chakra-ui/react";
 import { useContractExistsAtAddress, useContractLoader } from "eth-hooks";
 import React, { useMemo, useState } from "react";
 import Address from "../Address";
@@ -115,16 +115,14 @@ export default function Contract({
   });
 
   return (
-    <div style={{ margin: "auto", width: "70vw" }}>
+    <div style={{ margin: "auto", width: "70vw", border: 1 }}>
       <Flex
         size="lg"
         direction={"column"}
-        justify={"center"}
-        align={"center"}
         style={{ marginTop: 25, width: "100%" }}
         isLoading={contractDisplay && contractDisplay.length <= 0}
       >
-        <Heading alignContent={"end"} w={"fit-content"}>
+        <Box w={"full"}>
           <div style={{ fontSize: 24 }}>
             {name}
             <div style={{ float: "right", padding: 7 }}>
@@ -134,7 +132,7 @@ export default function Contract({
               </Flex>
             </div>
           </div>
-        </Heading>
+        </Box>
         {contractIsDeployed ? contractDisplay : noContractDisplay}
       </Flex>
     </div>
