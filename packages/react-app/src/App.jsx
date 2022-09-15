@@ -247,7 +247,6 @@ function App(props) {
   }, [loadWeb3Modal]);
 
   const faucetAvailable = localProvider && localProvider.connection && targetNetwork.name.indexOf("local") !== -1;
-  console.log(faucetAvailable);
 
   return (
     <div className="App">
