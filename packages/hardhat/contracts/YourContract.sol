@@ -36,6 +36,17 @@ contract StakingRewards {
     _;
   }
 
+  modifier updateReward(address _account) {
+    rewardPerTokenStored = rewardPerToken();
+    updatedAt = lastTimeRewardApplicable();
+    
+    if (_account != address(0)) {
+      rewards[_account] = earned(_account);
+      userRewardPerTokenStored[_account] = rewardPerTokenStored;
+    }
+    _;
+  }
+
   constructor(address _stakingToken, address _rewardToken) {
     owner = msg.sender;
     stakingToken = IERC20(_stakingToken);
@@ -89,7 +100,7 @@ contract StakingRewards {
     return rewardPerTokenStored + (rewardRate * (lastTimeRewardApplicable() - updatedAt) * 1e18) / totalSupply;
   }
 
-  function earned(address _account) external view returns (uint) {
+  function earned(address _account) public view returns (uint) {
     balanceOf[_account] * ((rewardPerToken() - userRewardPerTokenStored[_account]) / 1e18) + rewards[_account];
   }
 
