@@ -59,7 +59,7 @@ contract StakingRewards {
     duration = _duration;
   }
 
-  function notifyRewardAmount(uint _amount) external onlyOwner {
+  function notifyRewardAmount(uint _amount) external onlyOwner updateReward(address(0)) {
     if (block.timestamp > finishedAt){
       rewardRate = _amount;
     } else {
@@ -75,14 +75,14 @@ contract StakingRewards {
   }
 
 
-  function stake(uint _amount) external {
+  function stake(uint _amount) external updateReward(msg.sender){
     require(_amount > 0, "Amount = 0");
     stakingToken.transferFrom(msg.sender, address(this), _amount);
     balanceOf[msg.sender] = _amount;
     totalSupply += _amount;
   }
 
-  function withdraw(uint _amount) external {
+  function withdraw(uint _amount) external updateReward(msg.sender){
     require(_amount > 0, "Amount = 0");
     balanceOf[msg.sender] -= _amount;
     totalSupply -= _amount;
